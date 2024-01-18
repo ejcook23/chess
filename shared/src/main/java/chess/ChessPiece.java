@@ -55,6 +55,19 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
+        ChessPosition startPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
+        int pRow = myPosition.getRow();
+        int pCol = myPosition.getColumn();
+        int eRow;
+        int eCol;
+        if (this.type == PieceType.BISHOP) {
+            for (int r = pRow, c = pCol; r >= 0 && r < 8 && c >= 0 && c < 8; r++, c++) {
+                if
+            }
+        }
+
+        // I want to make a second instance of ChessPosition endPos that is the end move, then put them into
+        // a chessmove object and then add it to the chessmove collection, then return it.
         return possibleMoves;
     }
 }
