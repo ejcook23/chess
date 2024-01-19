@@ -7,6 +7,14 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessMove {
+    @Override
+    public String toString() {
+        return "ChessMove{" +
+                "startPosition=" + startPosition +
+                ", endPosition=" + endPosition +
+                ", promotionPiece=" + promotionPiece +
+                '}';
+    }
 
     private final ChessPosition startPosition;
     private final ChessPosition endPosition;
