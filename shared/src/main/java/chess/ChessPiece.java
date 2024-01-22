@@ -76,12 +76,103 @@ public class ChessPiece {
 
             calcKnightMoves(board, myPosition, possibleMoves);
 
+        }
+
+        if (piece.getPieceType() == PieceType.PAWN) {
+
+            int rowDir;
+            int colDir;
+
+            // IF PAWN IS WHITE
+            if(this.pieceColor == ChessGame.TeamColor.WHITE) {
+
+                // UP LEFT
+                rowDir = 1;
+                colDir = -1;
+                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+                // UP
+                rowDir = 1;
+                colDir = 0;
+                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+                // UP TWO
+                if (myPosition.getRow() == 2 && board.getPiece(new ChessPosition(3, myPosition.getColumn())) == null) {
+                    rowDir = 2;
+                    colDir = 0;
+                    pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+                }
+
+                // UP RIGHT
+                rowDir = 1;
+                colDir = 1;
+                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+            }
+
+            // IF PAWN IS BLACK
+            if(this.pieceColor == ChessGame.TeamColor.BLACK) {
+
+                // DOWN LEFT
+                rowDir = -1;
+                colDir = -1;
+                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+                // DOWN
+                rowDir = -1;
+                colDir = 0;
+                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+                // DOWN TWO
+                if (myPosition.getRow() == 7 && board.getPiece(new ChessPosition(6, myPosition.getColumn())) == null) {
+                    rowDir = -2;
+                    colDir = 0;
+                    pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+                }
+
+                // DOWN RIGHT
+                rowDir = -1;
+                colDir = 1;
+                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+            }
+
+
+
+
 
         }
 
         // I want to make a second instance of ChessPosition endPos that is the end move, then put them into
         // a chessmove object and then add it to the chessmove collection, then return it.
         return possibleMoves;
+    }
+
+    private void pawnMove(ChessBoard board, ChessPosition myPosition, int rowDir, int colDir, Collection<ChessMove> possibleMoves) {
+        int r = myPosition.getRow() + rowDir;
+        int c = myPosition.getColumn() + colDir;
+
+        if(isInBounds(r,c)) {
+
+            ChessPosition potPos = new ChessPosition(r,c);
+
+            if (board.getPiece(potPos) == null && colDir == 0) {
+                // creates a new, validated potential Move ONLY IF EMPTY AND IN SAME COLUMN (white)
+                ChessMove potMove = new ChessMove(myPosition, potPos, null);
+                // adds the potential move to the possible moves array list
+                possibleMoves.add(potMove);
+            }
+
+            else {
+                if((board.getPiece(potPos) != null && board.getPiece(potPos).pieceColor != this.pieceColor) && colDir != 0) {
+                    // creates a new, validated potential Move since there is an enemy there (white), and not in the same column
+                    ChessMove potMove = new ChessMove(myPosition, potPos, null);
+                    // adds the potential move to the possible moves array list
+                    possibleMoves.add(potMove);
+                }
+
+            }
+        }
     }
 
     private void calcKnightMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
