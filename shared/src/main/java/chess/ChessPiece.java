@@ -56,11 +56,7 @@ public class ChessPiece {
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        ChessPosition startPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
-        int currRow = myPosition.getRow();
-        int currCol = myPosition.getColumn();
-        int eRow;
-        int eCol;
+
         ChessPiece piece = board.getPiece(myPosition);
         
         // BISHOP MOVES
@@ -69,74 +65,24 @@ public class ChessPiece {
             int colDir = 1;
             int rowDir = 1;
             // UP AND TO THE RIGHT
-            diagonalMoves(currRow + rowDir, currCol, colDir, board, startPos, possibleMoves);
+            diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
 
+            colDir = 1;
+            rowDir = -1;
             // DOWN AND TO THE RIGHT
-            diagonalMoves(currRow - 1, currCol, 1, board, startPos, possibleMoves);
+            diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
 
+            colDir = -1;
+            rowDir = -1;
             // DOWN AND TO THE LEFT
-            for (int r = currRow - 1, c = currCol - 1; r >= 0 && r < 8 && c >= 0 && c < 8;) {
-                // create an instance for potential position going down and to the left
-                ChessPosition potPos = new ChessPosition(r,c);
+            diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
 
-                // POTENTIAL POSITION IS EMPTY
-                if(board.getPiece(potPos) == null) {
-                    // creates a new, validated potential Move since there is nothing there
-                    ChessMove potMove = new ChessMove(startPos,potPos,null);
-                    // adds the potential move to the possible moves array list
-                    possibleMoves.add(potMove);
-                    r++;
-                    c++;
-                    continue;
-                }
-
-                // POTENTIAL POSITION CONTAINS AN ENEMY PIECE
-                if(board.getPiece(potPos).pieceColor != this.pieceColor) {
-                    // creates a new, validated potential Move since there is an enemy there
-                    ChessMove potMove = new ChessMove(startPos,potPos,null);
-                    // adds the potential move to the possible moves array list
-                    possibleMoves.add(potMove);
-                    break;
-                }
-
-                // POTENTIAL POSITION CONTAINS FRIENDLY PIECE, blocking the way
-                else {
-                    //stop looping, because it's a friendly piece and can't go further because its blocked
-                    break;
-                }
-            }
-
+            colDir = -1;
+            rowDir = 1;
             // UP AND TO THE LEFT
-            for (int r = currRow + 1, c = currCol - 1; r >= 0 && r < 8 && c >= 0 && c < 8;) {
-                // create an instance for potential position going up and to the left
-                ChessPosition potPos = new ChessPosition(r,c);
+            diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
 
-                // POTENTIAL POSITION IS EMPTY
-                if(board.getPiece(potPos) == null) {
-                    // creates a new, validated potential Move since there is nothing there
-                    ChessMove potMove = new ChessMove(startPos,potPos,null);
-                    // adds the potential move to the possible moves array list
-                    possibleMoves.add(potMove);
-                    r++;
-                    c++;
-                    continue;
-                }
 
-                // POTENTIAL POSITION CONTAINS AN ENEMY PIECE
-                if(board.getPiece(potPos).pieceColor != this.pieceColor) {
-                    // creates a new, validated potential Move since there is an enemy there
-                    ChessMove potMove = new ChessMove(startPos,potPos,null);
-                    // adds the potential move to the possible moves array list
-                    possibleMoves.add(potMove);
-                    break;
-                }
-
-                // POTENTIAL POSITION CONTAINS FRIENDLY PIECE, blocking the way
-                else {
-                    //stop looping, because it's a friendly piece and can't go further because its blocked
-                    break;
-                }
-            }
 
 
         }
@@ -146,8 +92,12 @@ public class ChessPiece {
         return possibleMoves;
     }
 
-    private void diagonalMoves(int currRow, int currCol, int colDir, ChessBoard board, ChessPosition startPos, Collection<ChessMove> possibleMoves) {
-        for (int r = currRow, c = currCol + colDir; isInBounds(r, c); ) {
+    private void diagonalMoves(int rowDir, int colDir, ChessBoard board, ChessPosition startPos, Collection<ChessMove> possibleMoves) {
+        int r = startPos.getRow() + rowDir;
+        int c = startPos.getColumn() + colDir;
+
+
+        while(isInBounds(r, c)) {
             // create an instance for potential position going up and to the right
             ChessPosition potPos = new ChessPosition(r, c);
 
@@ -157,8 +107,8 @@ public class ChessPiece {
                 ChessMove potMove = new ChessMove(startPos, potPos, null);
                 // adds the potential move to the possible moves array list
                 possibleMoves.add(potMove);
-                r++;
-                c++;
+                r = r + rowDir;
+                c = c + colDir;
                 continue;
             }
 
