@@ -62,34 +62,112 @@ public class ChessPiece {
         // BISHOP MOVES
         if (piece.getPieceType() == PieceType.BISHOP) {
 
-            int colDir = 1;
-            int rowDir = 1;
-            // UP AND TO THE RIGHT
-            diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
+            calcBishopMoves(board, myPosition, possibleMoves);
 
-            colDir = 1;
-            rowDir = -1;
-            // DOWN AND TO THE RIGHT
-            diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
+        }
 
-            colDir = -1;
-            rowDir = -1;
-            // DOWN AND TO THE LEFT
-            diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
+        if (piece.getPieceType() == PieceType.KING) {
 
-            colDir = -1;
-            rowDir = 1;
-            // UP AND TO THE LEFT
-            diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
-
-
-
+            calcKingMoves(board, myPosition, possibleMoves);
 
         }
 
         // I want to make a second instance of ChessPosition endPos that is the end move, then put them into
         // a chessmove object and then add it to the chessmove collection, then return it.
         return possibleMoves;
+    }
+
+    private void calcKingMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        int colDir = 0;
+        int rowDir = 1;
+        // UP
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        colDir = 1;
+        rowDir = 1;
+        // UP RIGHT
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        colDir = 1;
+        rowDir = 0;
+        // RIGHT
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        colDir = 1;
+        rowDir = -1;
+        // DOWN RIGHT
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        colDir = 0;
+        rowDir = -1;
+        // DOWN
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        colDir = -1;
+        rowDir = -1;
+        // DOWN LEFT
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        colDir = -1;
+        rowDir = 0;
+        // LEFT
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        colDir = -1;
+        rowDir = 1;
+        // UP LEFT
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+    }
+
+
+
+    private void singleMove(ChessBoard board, ChessPosition myPosition, int rowDir, int colDir, Collection<ChessMove> possibleMoves) {
+        int r = myPosition.getRow() + rowDir;
+        int c = myPosition.getColumn() + colDir;
+
+        if(isInBounds(r,c)) {
+
+            ChessPosition potPos = new ChessPosition(r,c);
+
+            if (board.getPiece(potPos) == null) {
+                // creates a new, validated potential Move since there is nothing there
+                ChessMove potMove = new ChessMove(myPosition, potPos, null);
+                // adds the potential move to the possible moves array list
+                possibleMoves.add(potMove);
+
+            }
+            else {
+                if((board.getPiece(potPos).pieceColor != this.pieceColor)) {
+                    // creates a new, validated potential Move since there is an enemy there
+                    ChessMove potMove = new ChessMove(myPosition, potPos, null);
+                    // adds the potential move to the possible moves array list
+                    possibleMoves.add(potMove);
+                }
+
+            }
+        }
+    }
+
+    private void calcBishopMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        int colDir = 1;
+        int rowDir = 1;
+        // UP AND TO THE RIGHT
+        diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
+
+        colDir = 1;
+        rowDir = -1;
+        // DOWN AND TO THE RIGHT
+        diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
+
+        colDir = -1;
+        rowDir = -1;
+        // DOWN AND TO THE LEFT
+        diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
+
+        colDir = -1;
+        rowDir = 1;
+        // UP AND TO THE LEFT
+        diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
     }
 
     private void diagonalMoves(int rowDir, int colDir, ChessBoard board, ChessPosition startPos, Collection<ChessMove> possibleMoves) {
