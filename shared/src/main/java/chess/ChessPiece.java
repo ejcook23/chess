@@ -72,9 +72,61 @@ public class ChessPiece {
 
         }
 
+        if (piece.getPieceType() == PieceType.KNIGHT) {
+
+            calcKnightMoves(board, myPosition, possibleMoves);
+
+
+        }
+
         // I want to make a second instance of ChessPosition endPos that is the end move, then put them into
         // a chessmove object and then add it to the chessmove collection, then return it.
         return possibleMoves;
+    }
+
+    private void calcKnightMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        int rowDir;
+        int colDir;
+
+        // UP L LEAN LEFT
+        rowDir = 2;
+        colDir = -1;
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        // UP L LEAN RIGHT
+        rowDir = 2;
+        colDir = 1;
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        // RIGHT L UP
+        rowDir = 1;
+        colDir = 2;
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        // RIGHT L DOWN
+        rowDir = -1;
+        colDir = 2;
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        // DOWN L RIGHT
+        rowDir = -2;
+        colDir = 1;
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        // DOWN L LEFT
+        rowDir = -2;
+        colDir = -1;
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        // LEFT L DOWN
+        rowDir = -1;
+        colDir = -2;
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        // LEFT L UP
+        rowDir = 1;
+        colDir = -2;
+        singleMove(board, myPosition, rowDir, colDir, possibleMoves);
     }
 
     private void calcKingMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
