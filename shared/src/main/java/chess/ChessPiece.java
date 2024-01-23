@@ -196,18 +196,41 @@ public class ChessPiece {
             ChessPosition potPos = new ChessPosition(r,c);
 
             if (board.getPiece(potPos) == null && colDir == 0) {
-                // creates a new, validated potential Move ONLY IF EMPTY AND IN SAME COLUMN (white)
-                ChessMove potMove = new ChessMove(myPosition, potPos, null);
-                // adds the potential move to the possible moves array list
-                possibleMoves.add(potMove);
+                //checks to see if it is in the promotion lane for its color, then adds the potential promotions
+                if(r == 8 && this.pieceColor == ChessGame.TeamColor.WHITE || r == 1 && this.pieceColor == ChessGame.TeamColor.BLACK) {
+                    PieceType[] promoPieces = {PieceType.ROOK, PieceType.QUEEN, PieceType.BISHOP, PieceType.KNIGHT};
+                    for (PieceType promoPiece : promoPieces) {
+                        ChessMove potMove = new ChessMove(myPosition, potPos, promoPiece);
+                        // adds the potential move to the possible moves array list
+                        possibleMoves.add(potMove);
+                    }
+                }
+                else {
+                    // creates a new, validated potential Move ONLY IF EMPTY AND IN SAME COLUMN (white)
+                    ChessMove potMove = new ChessMove(myPosition, potPos, null);
+                    // adds the potential move to the possible moves array list
+                    possibleMoves.add(potMove);
+                }
             }
 
             else {
                 if((board.getPiece(potPos) != null && board.getPiece(potPos).pieceColor != this.pieceColor) && colDir != 0) {
-                    // creates a new, validated potential Move since there is an enemy there (white), and not in the same column
-                    ChessMove potMove = new ChessMove(myPosition, potPos, null);
-                    // adds the potential move to the possible moves array list
-                    possibleMoves.add(potMove);
+                    // checks to see if in promotion lane, then adds potential promotions
+                    if(r == 8 && this.pieceColor == ChessGame.TeamColor.WHITE || r == 1 && this.pieceColor == ChessGame.TeamColor.BLACK) {
+                        PieceType[] promoPieces = {PieceType.ROOK, PieceType.QUEEN, PieceType.BISHOP, PieceType.KNIGHT};
+                        for (PieceType promoPiece : promoPieces) {
+                            ChessMove potMove = new ChessMove(myPosition, potPos, promoPiece);
+                            // adds the potential move to the possible moves array list
+                            possibleMoves.add(potMove);
+                        }
+                    }
+                    else {
+                        // creates a new, validated potential Move since there is an enemy there (white), and not in the same column
+                        ChessMove potMove = new ChessMove(myPosition, potPos, null);
+                        // adds the potential move to the possible moves array list
+                        possibleMoves.add(potMove);
+                    }
+
                 }
 
             }
