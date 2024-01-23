@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -78,6 +79,19 @@ public class ChessPiece {
 
         }
 
+        if (piece.getPieceType() == PieceType.ROOK) {
+
+            calcRookMoves(board, myPosition, possibleMoves);
+
+        }
+
+        if (piece.getPieceType() == PieceType.QUEEN) {
+
+            calcRookMoves(board, myPosition, possibleMoves);
+            calcBishopMoves(board, myPosition, possibleMoves);
+
+        }
+
         if (piece.getPieceType() == PieceType.PAWN) {
 
             int rowDir;
@@ -146,6 +160,31 @@ public class ChessPiece {
         // I want to make a second instance of ChessPosition endPos that is the end move, then put them into
         // a chessmove object and then add it to the chessmove collection, then return it.
         return possibleMoves;
+    }
+
+    private void calcRookMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        int rowDir;
+        int colDir;
+
+        // UP
+        rowDir = 1;
+        colDir = 0;
+        diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
+
+        // RIGHT
+        rowDir = 0;
+        colDir = 1;
+        diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
+
+        // DOWN
+        rowDir = -1;
+        colDir = 0;
+        diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
+
+        // LEFT
+        rowDir = 0;
+        colDir = -1;
+        diagonalMoves(rowDir, colDir, board, myPosition, possibleMoves);
     }
 
     private void pawnMove(ChessBoard board, ChessPosition myPosition, int rowDir, int colDir, Collection<ChessMove> possibleMoves) {
@@ -353,4 +392,27 @@ public class ChessPiece {
     private static boolean isInBounds(int r, int c) {
         return r >= 1 && r <= 8 && c >= 1 && c <= 8;
     }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
+
+
 }
