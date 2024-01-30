@@ -94,65 +94,7 @@ public class ChessPiece {
 
         if (piece.getPieceType() == PieceType.PAWN) {
 
-            int rowDir;
-            int colDir;
-
-            // IF PAWN IS WHITE
-            if(this.pieceColor == ChessGame.TeamColor.WHITE) {
-
-                // UP LEFT
-                rowDir = 1;
-                colDir = -1;
-                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
-
-                // UP
-                rowDir = 1;
-                colDir = 0;
-                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
-
-                // UP TWO
-                if (myPosition.getRow() == 2 && board.getPiece(new ChessPosition(3, myPosition.getColumn())) == null) {
-                    rowDir = 2;
-                    colDir = 0;
-                    pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
-                }
-
-                // UP RIGHT
-                rowDir = 1;
-                colDir = 1;
-                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
-
-            }
-
-            // IF PAWN IS BLACK
-            if(this.pieceColor == ChessGame.TeamColor.BLACK) {
-
-                // DOWN LEFT
-                rowDir = -1;
-                colDir = -1;
-                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
-
-                // DOWN
-                rowDir = -1;
-                colDir = 0;
-                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
-
-                // DOWN TWO
-                if (myPosition.getRow() == 7 && board.getPiece(new ChessPosition(6, myPosition.getColumn())) == null) {
-                    rowDir = -2;
-                    colDir = 0;
-                    pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
-                }
-
-                // DOWN RIGHT
-                rowDir = -1;
-                colDir = 1;
-                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
-
-            }
-
-
-
+            calcPawnMoves(board, myPosition, possibleMoves);
 
 
         }
@@ -160,6 +102,65 @@ public class ChessPiece {
         // I want to make a second instance of ChessPosition endPos that is the end move, then put them into
         // a chessmove object and then add it to the chessmove collection, then return it.
         return possibleMoves;
+    }
+
+    private void calcPawnMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        int rowDir;
+        int colDir;
+
+        // IF PAWN IS WHITE
+        if(this.pieceColor == ChessGame.TeamColor.WHITE) {
+
+            // UP LEFT
+            rowDir = 1;
+            colDir = -1;
+            pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+            // UP
+            rowDir = 1;
+            colDir = 0;
+            pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+            // UP TWO
+            if (myPosition.getRow() == 2 && board.getPiece(new ChessPosition(3, myPosition.getColumn())) == null) {
+                rowDir = 2;
+                colDir = 0;
+                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+            }
+
+            // UP RIGHT
+            rowDir = 1;
+            colDir = 1;
+            pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        }
+
+        // IF PAWN IS BLACK
+        if(this.pieceColor == ChessGame.TeamColor.BLACK) {
+
+            // DOWN LEFT
+            rowDir = -1;
+            colDir = -1;
+            pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+            // DOWN
+            rowDir = -1;
+            colDir = 0;
+            pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+            // DOWN TWO
+            if (myPosition.getRow() == 7 && board.getPiece(new ChessPosition(6, myPosition.getColumn())) == null) {
+                rowDir = -2;
+                colDir = 0;
+                pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+            }
+
+            // DOWN RIGHT
+            rowDir = -1;
+            colDir = 1;
+            pawnMove(board, myPosition, rowDir, colDir, possibleMoves);
+
+        }
     }
 
     private void calcRookMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
