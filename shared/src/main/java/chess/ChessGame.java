@@ -74,6 +74,19 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         boolean inCheck = false;
 
+        for(int row = 1; row > 0 && row < 9;) {
+            for(int col = 1; col > 0 && col < 9;) {
+
+
+
+
+                col++;
+            }
+            row++;
+        }
+
+
+         //   return r >= 1 && r <= 8 && c >= 1 && c <= 8;
 
 
         return inCheck;
@@ -110,6 +123,8 @@ public class ChessGame {
      *
      * @param board the new board to use
      */
+
+
     public void setBoard(ChessBoard board) {
         chessBoard = board;
     }
