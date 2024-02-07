@@ -73,28 +73,49 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         boolean inCheck = false;
+        ChessPiece findPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
+        ChessPosition kingPosition;
+        kingPosition = findPiece(findPiece);
 
+        // goes through all the board spots
+        aBreak:
         for(int row = 1; row > 0 && row < 9;) {
             for(int col = 1; col > 0 && col < 9;) {
+                // if it is an enemy color and not null
+                ChessPosition testPos = new ChessPosition(row,col) ;
+                if((chessBoard.getPiece(testPos).getTeamColor() != teamColor) && (chessBoard.getPiece(testPos) != null)) {
+                    for(x in chessBoard.getPiece(testPos).pieceMoves(chessBoard,testPos);) {
+
+                    }
 
 
-
-
+                    break aBreak;
+                }
                 col++;
             }
             row++;
         }
 
 
-         //   return r >= 1 && r <= 8 && c >= 1 && c <= 8;
-
 
         return inCheck;
     }
 
-
-
-
+    private ChessPosition findPiece(ChessPiece findPiece) {
+        ChessPosition piecePos = null;
+        bigBreak:
+        for(int row = 1; row > 0 && row < 9;) {
+            for(int col = 1; col > 0 && col < 9;) {
+                if(chessBoard.getPiece(new ChessPosition(row,col)) == findPiece) {
+                    piecePos = new ChessPosition(row,col);
+                    break bigBreak;
+                }
+                col++;
+            }
+            row++;
+        }
+        return piecePos;
+    }
 
 
     /**
