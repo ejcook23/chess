@@ -84,20 +84,18 @@ public class ChessGame {
                 // if it is an enemy color and not null
                 ChessPosition testPos = new ChessPosition(row,col) ;
                 if((chessBoard.getPiece(testPos).getTeamColor() != teamColor) && (chessBoard.getPiece(testPos) != null)) {
-                    for(x in chessBoard.getPiece(testPos).pieceMoves(chessBoard,testPos);) {
-
+                    // see if any of its end positions are on the king spot
+                    for(ChessMove move : chessBoard.getPiece(testPos).pieceMoves(chessBoard,testPos)) {
+                        inCheck = (move.getEndPosition() == testPos);
+                        if(inCheck) {
+                            break aBreak;
+                        }
                     }
-
-
-                    break aBreak;
                 }
                 col++;
             }
             row++;
         }
-
-
-
         return inCheck;
     }
 
