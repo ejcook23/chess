@@ -54,6 +54,7 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         ChessPiece currPiece = chessBoard.getPiece(startPosition);
 
+
         // check if there is a piece there
         if(currPiece == null) {
             return null;
