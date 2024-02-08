@@ -16,8 +16,7 @@ public class ChessGame {
     }
 
     private ChessBoard chessBoard;
-    private TeamColor teamColor;
-    private TeamColor teamTurn;
+    private TeamColor teamTurn = TeamColor.WHITE;
     /**
      * @return Which team's turn it is
      */
@@ -102,7 +101,10 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPos = move.getStartPosition();
         ChessPiece currPiece = chessBoard.getPiece(startPos);
-
+        TeamColor pieceColor = currPiece.getTeamColor();
+        if(pieceColor != getTeamTurn()) {
+            throw new InvalidMoveException("Not your team's turn!");
+        }
         // if valid moves contains the move, then make it!
         if(validMoves(startPos).contains(move)) {
             //gets END POSITION of the move and saves it
@@ -115,6 +117,7 @@ public class ChessGame {
             }
             // set old position to null
             chessBoard.addPiece(startPos, null);
+            setTeamTurn(pieceColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
         } else {
             throw new InvalidMoveException("Tried to make an invalid move.");
         }
@@ -180,6 +183,10 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         if(isInCheck(teamColor)) {
             return validMoves(findPiece(new ChessPiece(teamColor, ChessPiece.PieceType.KING))).isEmpty();
+
+
+
+
         }
         return false;
     }
