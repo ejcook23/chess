@@ -184,6 +184,7 @@ public class ChessGame {
         return false;
     }
 
+
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves
