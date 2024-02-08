@@ -182,13 +182,24 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if(isInCheck(teamColor)) {
-            return validMoves(findPiece(new ChessPiece(teamColor, ChessPiece.PieceType.KING))).isEmpty();
-
-
-
-
+            return noPossibleMoves(teamColor);
         }
         return false;
+    }
+
+    private boolean noPossibleMoves(TeamColor teamColor) {
+        Collection<ChessMove> allMoves = new ArrayList<>();
+        for(int row = 1; row > 0 && row < 9;) {
+            for(int col = 1; col > 0 && col < 9;) {
+                ChessPiece currPiece = chessBoard.getPiece(new ChessPosition(row,col));
+                if(currPiece != null && currPiece.getTeamColor() == teamColor) {
+                    allMoves.addAll(validMoves(new ChessPosition(row,col)));
+                }
+                col++;
+            }
+            row++;
+        }
+        return allMoves.isEmpty();
     }
 
 
