@@ -69,8 +69,13 @@ public class ChessGame {
             ChessPosition endPos = move.getEndPosition();
             // gets the PIECE at the END position and saves it
             ChessPiece eatenPiece = chessBoard.getPiece(endPos);
-            // moves piece to the new position
-            chessBoard.addPiece(endPos,currPiece);
+
+                // moves piece to the new position, and if it is promotion accounts for that
+            if(move.getPromotionPiece() != null) {
+                chessBoard.addPiece(endPos, new ChessPiece(color,move.getPromotionPiece()));
+            } else {
+                chessBoard.addPiece(endPos,currPiece);
+            }
             // set old position to null
             chessBoard.addPiece(startPosition, null);
 
@@ -95,7 +100,24 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPosition startPos = move.getStartPosition();
+        ChessPiece currPiece = chessBoard.getPiece(startPos);
+
+        // if valid moves contains the move, then make it!
+        if(validMoves(startPos).contains(move)) {
+            //gets END POSITION of the move and saves it
+            ChessPosition endPos = move.getEndPosition();
+            // moves piece to the new position, and if it is promotion accounts for that
+            if(move.getPromotionPiece() != null) {
+                chessBoard.addPiece(endPos, new ChessPiece(currPiece.getTeamColor(),move.getPromotionPiece()));
+            } else {
+                chessBoard.addPiece(endPos,currPiece);
+            }
+            // set old position to null
+            chessBoard.addPiece(startPos, null);
+        } else {
+            throw new InvalidMoveException("Tried to make an invalid move.");
+        }
     }
 
     /**
@@ -156,7 +178,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if(isInCheck(teamColor)) {
+            return validMoves(findPiece(new ChessPiece(teamColor, ChessPiece.PieceType.KING))).isEmpty();
+        }
+        return false;
     }
 
     /**
