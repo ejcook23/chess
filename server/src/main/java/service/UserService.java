@@ -6,6 +6,7 @@ import model.UserData;
 public class UserService {
 
     public AuthData register(UserData user) {
+        // calls dataAccess functionality
         return new AuthData("tokenPlaceholder(register)","usernamePlaceholder(register)");
     }
 
