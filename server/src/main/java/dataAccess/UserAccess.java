@@ -9,5 +9,5 @@ public interface UserAccess {
 
 
     // clear all
-
+    void clearAllUsers();
 }

@@ -12,7 +12,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", (req, res) ->
-                (new ClearHandler()).handleRequest(req, res));
+                (new ClearHandler()).handle(req, res));
 
 
 
