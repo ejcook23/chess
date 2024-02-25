@@ -9,7 +9,7 @@ public interface UserAccess {
     // READ A SINGLE USER
     UserData getUser(String username) throws DataAccessException;
     // DELETE ALL USERS
-    void clearAllUsers();
+    void clearAllUsers() throws DataAccessException;
 
     // CREATE A SINGLE USER
     UserData registerUser(String username, String password, String email) throws DataAccessException;
