@@ -1,4 +1,4 @@
 package dataAccess;
 
-public class AuthAccess {
+public interface AuthAccess {
 }
