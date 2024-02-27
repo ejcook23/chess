@@ -1,7 +1,7 @@
 package service;
 
+import dataAccess.AuthAccess;
 import dataAccess.DataAccessException;
-import dataAccess.MemUserAccess;
 import dataAccess.UserAccess;
 import model.AuthData;
 import model.UserData;
@@ -9,21 +9,27 @@ import model.UserData;
 public class UserService {
 
     UserAccess userDAO;
+    AuthAccess authDAO;
 
-    public UserService(UserAccess userDAO) {
+    public UserService(UserAccess userDAO, AuthAccess authDAO) {
         this.userDAO = userDAO;
+        this.authDAO = authDAO;
 
     }
 
+
     public AuthData register(UserData user) throws DataAccessException {
-        // calls MemoryUserAccess functionality
-        if(userDAO.getUser(user.username()) != null) {
+        // callsDAO functionality
+        if(userDAO.getUserPass(user.username()) != null && userDAO.getUserMail(user.username()) != null) {
             throw new DataAccessException("Error: already taken");
         }
         if(user.username() == null || user.password() == null || user.email() == null) {
             throw new DataAccessException("Error: bad request");
         }
-        String authToken = userDAO.registerUser(user.username(), user.password(), user.email());
+        //INSERT USER
+        userDAO.addUser(user.username(), user.password(), user.email());
+        //CREATE AUTH
+        String authToken = authDAO.createAuth(user.username());
 
         return new AuthData(authToken,user.username());
     }

@@ -1,5 +1,7 @@
 package server;
 
+import dataAccess.AuthAccess;
+import dataAccess.MemAuthAccess;
 import dataAccess.MemUserAccess;
 import dataAccess.UserAccess;
 import handler.ClearHandler;
@@ -18,14 +20,15 @@ public class Server {
     private final RegisterHandler registerHandler;
 
     public Server() {
-        // INITIALIZE DAOS
+        // INIT DAOS
         UserAccess userDAO = new MemUserAccess();
+        AuthAccess authDAO = new MemAuthAccess();
 
-        // INITIALIZE SERVICES
+        // INIT SERVICES
         dbService = new DBService(userDAO);
-        userService = new UserService(userDAO);
+        userService = new UserService(userDAO, authDAO);
 
-        // INITIZIALIZE HANDLERS
+        // INIT HANDLERS
         clearHandler = new ClearHandler(dbService);
         registerHandler = new RegisterHandler(userService);
     }
@@ -37,11 +40,9 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.delete("/db", (req, res) ->
-                clearHandler.handle(req, res));
+        Spark.delete("/db", clearHandler::handle);
 
-        Spark.post("/user", (req, res) ->
-                registerHandler.handle(req, res));
+        Spark.post("/user", registerHandler::handle);
 
 
 

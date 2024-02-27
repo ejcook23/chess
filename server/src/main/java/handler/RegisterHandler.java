@@ -26,12 +26,12 @@ public class RegisterHandler {
         // String headers = req.headers("authorization");
 
         Gson json = new Gson();
+
         try {
+            // DESERIALIZE data into Json UserData
             UserData userData = json.fromJson(req.body(), UserData.class);
-            // pass this information to the service
-            AuthData authData = userService.register(userData);
-            // serialize and add to response
-            res.body(json.toJson(authData));
+            // Pass userData to the service, register, and pass back the body to be JSON'd
+            res.body(json.toJson(userService.register(userData)));
             res.status(200);
 
         } catch (DataAccessException e) {

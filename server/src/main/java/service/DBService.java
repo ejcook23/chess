@@ -15,7 +15,6 @@ public class DBService {
     public void clearDB() throws Exception {
 
         userDAO.clearAllUsers();
-        userDAO.clearTokens();
         // clear games as well
 
     }
