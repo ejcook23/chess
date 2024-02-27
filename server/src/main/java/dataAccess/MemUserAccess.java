@@ -23,14 +23,8 @@ public class MemUserAccess implements UserAccess {
 
     @Override
     public void clearAllUsers() throws DataAccessException {
-        if(userPass.isEmpty()) {
-            throw new DataAccessException("User database is already clear.");
-        }
-        else {
-            userPass.clear();
-            userMail.clear();
-        }
-
+        userPass.clear();
+        userMail.clear();
     }
 
     @Override

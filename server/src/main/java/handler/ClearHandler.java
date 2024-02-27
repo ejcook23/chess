@@ -13,15 +13,21 @@ public class ClearHandler {
 
     public Object handle(Request req, Response res) {
         // clear games
-        MemUserAccess clear = new MemUserAccess();
+         // does this actually go in the service?
+        DBService dbService = new DBService();
         try {
-            clear.clearAllUsers();
-        } catch(DataAccessException e) {
+            dbService.clearDB();
+            // set 200
+
+        } catch(Exception e) {
             res.status(500);
             // use the serializer gson to do the below
+
+            // how to serialize / deserialize? is this the right spot?
+
+
             String body = "";
             res.body(body);
-
         }
 
         ;
