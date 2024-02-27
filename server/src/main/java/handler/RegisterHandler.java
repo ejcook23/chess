@@ -14,23 +14,27 @@ import java.util.Objects;
 
 public class RegisterHandler {
 
+    UserService userService;
+
+    public RegisterHandler(UserService userService) {
+        this.userService = userService;
+    }
+
     public Object handle(Request req, Response res) {
 
         // this is helpful for others, not needed for Register
         // String headers = req.headers("authorization");
 
+        Gson json = new Gson();
         try {
-            Gson json = new Gson();
             UserData userData = json.fromJson(req.body(), UserData.class);
             // pass this information to the service
-            UserService userService = new UserService();
             AuthData authData = userService.register(userData);
             // serialize and add to response
             res.body(json.toJson(authData));
             res.status(200);
 
         } catch (DataAccessException e) {
-            Gson json = new Gson();
             // if the error message equals... set to corresponding response and code
             if(Objects.equals(e.getMessage(), "Error: already taken")) {
                 res.body(json.toJson(new ErrorMsg(e.getMessage())));
@@ -41,12 +45,12 @@ public class RegisterHandler {
                 res.status(400);
             }
             else {
-                res.body(json.toJson(new ErrorMsg("Error: unknown error, see RegisterHandler.java");
+                res.body(json.toJson(new ErrorMsg("Error: unknown error, see RegisterHandler.java")));
                 res.status(500);
             }
 
         }
 
-
+        return res.body();
     }
 }

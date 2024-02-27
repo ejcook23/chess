@@ -26,28 +26,22 @@ public class MemUserAccess implements UserAccess {
         userMail.clear();
     }
 
-    public void clearTokens() throws DataAccessException {
-        authTokens.clear();
-    }
+
 
     @Override
-    /**
-      @return returns a newly generated auth token for the user
-     */
+    // returns a newly generated token for that user
     public String registerUser(String username, String password, String email) throws DataAccessException {
-        if(userPass.get(username) != null) {
-            throw new DataAccessException("Error: already taken");
-        }
-        if(username == null || password == null || email == null) {
-            throw new DataAccessException("Error: bad request");
-        }
-        else {
-            userPass.put(username,password);
-            userMail.put(username,email);
-            authTokens.put(username,genAuthToken());
-        }
 
-        return username;
+        userPass.put(username,password);
+        userMail.put(username,email);
+        String newAuth = genAuthToken();
+        authTokens.put(username,newAuth);
+
+        System.out.println(userPass);
+        System.out.println(authTokens);
+
+        return newAuth;
+
     }
 
 
