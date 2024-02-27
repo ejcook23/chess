@@ -25,6 +25,7 @@ public class MemAuthAccess implements AuthAccess{
     public String createAuth(String username) {
         String newAuthToken = UUID.randomUUID().toString();
         authTokens.put(newAuthToken,username);
+        System.out.println(authTokens);
         return newAuthToken;
     }
 
