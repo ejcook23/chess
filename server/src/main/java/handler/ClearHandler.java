@@ -3,37 +3,26 @@ package handler;
 import dataAccess.DataAccessException;
 import dataAccess.MemGameAccess;
 import dataAccess.MemUserAccess;
+import model.ErrorMsg;
 import passoffTests.testClasses.TestModels;
 import service.DBService;
 import service.GameService;
 import spark.Request;
 import spark.Response;
+import com.google.gson.Gson;
 
 public class ClearHandler {
 
     public Object handle(Request req, Response res) {
-        // clear games
-         // does this actually go in the service?
         DBService dbService = new DBService();
         try {
             dbService.clearDB();
-            // set 200
-
+            res.status(200);
         } catch(Exception e) {
+            Gson gson = new Gson();
+            res.body(gson.toJson(new ErrorMsg(e.getMessage())));
             res.status(500);
-            // use the serializer gson to do the below
-
-            // how to serialize / deserialize? is this the right spot?
-
-
-            String body = "";
-            res.body(body);
         }
-
-        ;
-
-        // clear users
-        // clear auth tokens
         return req.body();
     }
     // method that takes in a spark request and response (spark objects to read from and write to)

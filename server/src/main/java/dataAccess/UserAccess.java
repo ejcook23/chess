@@ -2,8 +2,6 @@ package dataAccess;
 
 import model.UserData;
 
-import javax.xml.crypto.Data;
-
 public interface UserAccess {
 
     // READ A SINGLE USER
@@ -12,7 +10,7 @@ public interface UserAccess {
     void clearAllUsers() throws DataAccessException;
 
     // CREATE A SINGLE USER
-    UserData registerUser(String username, String password, String email) throws DataAccessException;
+    String registerUser(String username, String password, String email) throws DataAccessException;
 
 
 }

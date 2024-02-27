@@ -9,8 +9,10 @@ public class DBService {
     public void clearDB() throws Exception {
         MemUserAccess memUserAccess = new MemUserAccess();
         memUserAccess.clearAllUsers();
-
-
+        memUserAccess.clearTokens();
+        // clear games as well
 
     }
+
+
 }
