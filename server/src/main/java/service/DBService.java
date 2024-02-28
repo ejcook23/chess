@@ -1,20 +1,22 @@
 package service;
 
-import dataAccess.DataAccessException;
-import dataAccess.MemUserAccess;
+import dataAccess.AuthAccess;
 import dataAccess.UserAccess;
 
 public class DBService {
 
     UserAccess userDAO;
+    AuthAccess authDAO;
 
-    public DBService(UserAccess userDAO) {
+    public DBService(UserAccess userDAO, AuthAccess authDAO) {
         this.userDAO = userDAO;
+        this.authDAO = authDAO;
     }
-    // clear method
+
     public void clearDB() throws Exception {
 
         userDAO.clearAllUsers();
+        authDAO.clearTokens();
         // clear games as well
 
     }

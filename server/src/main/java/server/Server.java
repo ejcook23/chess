@@ -25,7 +25,7 @@ public class Server {
         AuthAccess authDAO = new MemAuthAccess();
 
         // INIT SERVICES
-        dbService = new DBService(userDAO);
+        dbService = new DBService(userDAO, authDAO);
         userService = new UserService(userDAO, authDAO);
 
         // INIT HANDLERS

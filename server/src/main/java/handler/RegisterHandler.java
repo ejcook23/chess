@@ -36,16 +36,16 @@ public class RegisterHandler {
 
         } catch (DataAccessException e) {
             // if the error message equals... set to corresponding response and code
+            res.body(json.toJson(new ErrorMsg(e.getMessage())));
+
             if(Objects.equals(e.getMessage(), "Error: already taken")) {
-                res.body(json.toJson(new ErrorMsg(e.getMessage())));
                 res.status(403);
             }
-            if(Objects.equals(e.getMessage(), "Error: bad request")) {
-                res.body(json.toJson(new ErrorMsg(e.getMessage())));
+            else if(Objects.equals(e.getMessage(), "Error: bad request")) {
                 res.status(400);
             }
             else {
-                res.body(json.toJson(new ErrorMsg("Error: unknown error, see RegisterHandler.java")));
+                res.body(json.toJson(new ErrorMsg("Error: ")));
                 res.status(500);
             }
 
