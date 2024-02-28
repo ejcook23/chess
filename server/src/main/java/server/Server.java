@@ -5,6 +5,7 @@ import dataAccess.MemAuthAccess;
 import dataAccess.MemUserAccess;
 import dataAccess.UserAccess;
 import handler.ClearHandler;
+import handler.LoginHandler;
 import handler.RegisterHandler;
 import service.DBService;
 import service.GameService;
@@ -18,6 +19,7 @@ public class Server {
     private final UserService userService;
     private final ClearHandler clearHandler;
     private final RegisterHandler registerHandler;
+    private final LoginHandler loginHandler;
 
     public Server() {
         // INIT DAOS
@@ -31,6 +33,7 @@ public class Server {
         // INIT HANDLERS
         clearHandler = new ClearHandler(dbService);
         registerHandler = new RegisterHandler(userService);
+        loginHandler = new LoginHandler(userService);
     }
 
 
@@ -43,6 +46,8 @@ public class Server {
         Spark.delete("/db", clearHandler::handle);
 
         Spark.post("/user", registerHandler::handle);
+
+        Spark.post("/session",loginHandler::handle);
 
 
 
