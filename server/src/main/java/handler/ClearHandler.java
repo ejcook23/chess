@@ -20,6 +20,7 @@ public class ClearHandler {
     public Object handle(Request req, Response res) {
         try {
             dbService.clearDB();
+            res.body("{}");
             res.status(200);
         } catch(Exception e) {
             Gson gson = new Gson();

@@ -12,21 +12,22 @@ public class MemAuthAccess implements AuthAccess{
         authTokens.clear();
     }
 
-   // @Override
-//    public AuthData getToken(String username) throws DataAccessException {
-//        if(authTokens.get(username) == null) {
-//            throw new DataAccessException("Attempted to GET the TOKEN of a nonexistent user.");
-//        }
-//        else {
-//            return new AuthData(authTokens.get(username),username);
-//        }
-//    }
+    @Override
+    public boolean tokenExists(String token) {
+        return authTokens.get(token) != null;
+    }
+
     @Override
     public String createAuth(String username) {
         String newAuthToken = UUID.randomUUID().toString();
         authTokens.put(newAuthToken,username);
         System.out.println(authTokens);
         return newAuthToken;
+    }
+
+    @Override
+    public void delToken(String token) {
+        authTokens.remove(token);
     }
 
 }
