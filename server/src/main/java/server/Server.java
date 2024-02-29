@@ -53,9 +53,7 @@ public class Server {
         Spark.post("/session", loginHandler::handle);
 
         Spark.delete("/session", logoutHandler::handle);
-
-
-
+        
 
         Spark.awaitInitialization();
         return Spark.port();
