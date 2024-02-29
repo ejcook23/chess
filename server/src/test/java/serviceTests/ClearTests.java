@@ -1,6 +1,8 @@
 package serviceTests;
 
 import dataAccess.*;
+import model.UserAndAuthResponse;
+import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import service.UserService;
@@ -15,21 +17,16 @@ public class ClearTests {
 
         UserService service = new UserService(userDAO, authDAO);
 
-        service.register
-
-
-
-        userDAO.addUser("User","Pass","Email");
-        String token = authDAO.createAuth("User");
+        UserAndAuthResponse response = service.register(new UserData("User","Pass","Email"));
 
         Assertions.assertEquals("Pass",userDAO.getUserPass("User") );
-        Assertions.assertTrue(authDAO.tokenExists(token));
+        Assertions.assertTrue(authDAO.tokenExists(response.authToken()));
 
         userDAO.clearAllUsers();
         authDAO.clearTokens();
 
         Assertions.assertNotEquals("Pass",userDAO.getUserPass("User") );
-        Assertions.assertFalse(authDAO.tokenExists(token));
+        Assertions.assertFalse(authDAO.tokenExists(response.authToken()));
 
 
     }
