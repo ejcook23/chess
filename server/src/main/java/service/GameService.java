@@ -1,9 +1,17 @@
 package service;
 
+import dataAccess.AuthAccess;
+import dataAccess.GameAccess;
+
 public class GameService {
-    // list games
+    AuthAccess authDAO;
+    GameAccess gameDAO;
 
-    // join game
+    public GameService(AuthAccess authDAO, GameAccess gameDAO) {
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
 
+    }
 
 }
+

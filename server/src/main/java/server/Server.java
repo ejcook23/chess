@@ -1,13 +1,7 @@
 package server;
 
-import dataAccess.AuthAccess;
-import dataAccess.MemAuthAccess;
-import dataAccess.MemUserAccess;
-import dataAccess.UserAccess;
-import handler.ClearHandler;
-import handler.LoginHandler;
-import handler.LogoutHandler;
-import handler.RegisterHandler;
+import dataAccess.*;
+import handler.*;
 import service.DBService;
 import service.GameService;
 import service.UserService;
@@ -18,25 +12,29 @@ public class Server {
     private final DBService dbService;
     //private final GameService gameService;
     private final UserService userService;
+    private final GameService gameService;
     private final ClearHandler clearHandler;
     private final RegisterHandler registerHandler;
     private final LoginHandler loginHandler;
     private final LogoutHandler logoutHandler;
+    private final CreateGameHandler createGameHandler;
 
     public Server() {
         // INIT DAOS
         UserAccess userDAO = new MemUserAccess();
         AuthAccess authDAO = new MemAuthAccess();
-
+        GameAccess gameDAO = new MemGameAccess();
         // INIT SERVICES
         dbService = new DBService(userDAO, authDAO);
         userService = new UserService(userDAO, authDAO);
+        gameService = new GameService(authDAO, gameDAO);
 
         // INIT HANDLERS
         clearHandler = new ClearHandler(dbService);
         registerHandler = new RegisterHandler(userService);
         loginHandler = new LoginHandler(userService);
         logoutHandler = new LogoutHandler(userService);
+        createGameHandler = new CreateGameHandler(gameService);
     }
 
 
@@ -53,7 +51,8 @@ public class Server {
         Spark.post("/session", loginHandler::handle);
 
         Spark.delete("/session", logoutHandler::handle);
-        
+
+        Spark.post("/game", createGameHandler::handle);
 
         Spark.awaitInitialization();
         return Spark.port();
