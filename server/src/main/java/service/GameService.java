@@ -4,6 +4,11 @@ import dataAccess.AuthAccess;
 import dataAccess.DataAccessException;
 import dataAccess.GameAccess;
 import model.CreateGameResponse;
+import model.GameData;
+import model.ListGamesResponse;
+
+import java.util.Collection;
+import java.util.List;
 
 public class GameService {
     AuthAccess authDAO;
@@ -25,6 +30,15 @@ public class GameService {
             else {
                 throw new DataAccessException("Error: bad request");
             }
+        }
+        else {
+            throw new DataAccessException("Error: unauthorized");
+        }
+    }
+
+    public ListGamesResponse listGames(String header) throws DataAccessException {
+        if(authDAO.tokenExists(header)) {
+            return new ListGamesResponse(gameDAO.getAllGames());
         }
         else {
             throw new DataAccessException("Error: unauthorized");

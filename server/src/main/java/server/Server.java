@@ -27,7 +27,7 @@ public class Server {
         AuthAccess authDAO = new MemAuthAccess();
         GameAccess gameDAO = new MemGameAccess();
         // INIT SERVICES
-        dbService = new DBService(userDAO, authDAO);
+        dbService = new DBService(userDAO, authDAO, gameDAO);
         userService = new UserService(userDAO, authDAO);
         gameService = new GameService(authDAO, gameDAO);
 

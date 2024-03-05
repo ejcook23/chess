@@ -4,6 +4,7 @@ import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,5 +52,15 @@ public class MemGameAccess implements GameAccess{
         }
         gameIDs.add(gameID);
         return gameID;
+    }
+
+    public Collection<GameData> getAllGames() {
+        return gameList.values();
+    }
+
+    public void clearGames() {
+        gameList.clear();
+        gameIDs.clear();
+        gameNameID.clear();
     }
 }
