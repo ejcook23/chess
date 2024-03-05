@@ -10,14 +10,16 @@ import spark.*;
 public class Server {
 
     private final DBService dbService;
-    //private final GameService gameService;
     private final UserService userService;
     private final GameService gameService;
+
     private final ClearHandler clearHandler;
     private final RegisterHandler registerHandler;
     private final LoginHandler loginHandler;
     private final LogoutHandler logoutHandler;
     private final CreateGameHandler createGameHandler;
+    private final ListGamesHandler listGamesHandler;
+    private final JoinGameHandler joinGameHandler;
 
     public Server() {
         // INIT DAOS
@@ -35,6 +37,8 @@ public class Server {
         loginHandler = new LoginHandler(userService);
         logoutHandler = new LogoutHandler(userService);
         createGameHandler = new CreateGameHandler(gameService);
+        listGamesHandler = new ListGamesHandler(gameService);
+        joinGameHandler = new JoinGameHandler(gameService);
     }
 
 
@@ -53,6 +57,10 @@ public class Server {
         Spark.delete("/session", logoutHandler::handle);
 
         Spark.post("/game", createGameHandler::handle);
+
+        Spark.get("/game", listGamesHandler::handle);
+
+        Spark.put("/game", joinGameHandler::handle);
 
         Spark.awaitInitialization();
         return Spark.port();
