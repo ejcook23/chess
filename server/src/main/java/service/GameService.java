@@ -29,7 +29,7 @@ public class GameService {
                 return new CreateGameResponse(gameDAO.getGameIDByName(gameName));
             }
             else {
-                throw new DataAccessException("Error: bad request");
+                throw new DataAccessException("Error: game name already exists");
             }
         }
         else {

@@ -28,7 +28,7 @@ public class UserService {
             System.out.println("Error: already taken");
             throw new DataAccessException("Error: already taken");
         }
-        else if(Objects.equals(user.username(), "") || Objects.equals(user.password(), "") || Objects.equals(user.email(), "")) {
+        else if(Objects.equals(user.username(), null) || Objects.equals(user.password(), null) || Objects.equals(user.email(), null)) {
             System.out.println("Error: bad request");
             throw new DataAccessException("Error: bad request");
         }
