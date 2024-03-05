@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import model.CreateGameRequest;
 import model.ErrorMsg;
+import model.ListGamesResponse;
 import service.GameService;
 import spark.Request;
 import spark.Response;
@@ -29,7 +30,10 @@ public class ListGamesHandler {
             String header = req.headers("Authorization");
             System.out.println(header);
             // create the game and return the new gameID
-            res.body(json.toJson( gameService.listGames(header)));
+            ListGamesResponse response = gameService.listGames(header);
+            res.body(json.toJson(response));
+            System.out.println(response);
+
             res.status(200);
 
         } catch (DataAccessException e) {
