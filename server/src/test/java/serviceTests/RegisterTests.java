@@ -33,7 +33,7 @@ public class RegisterTests {
     public void registerNeg() {
 
         // REGISTER NEGATIVE
-        Assertions.assertThrows(DataAccessException.class,() -> service.register(new UserData("User1","","Email")));
+        Assertions.assertThrows(DataAccessException.class,() -> service.register(new UserData("User1",null,"Email")));
 
     }
 }
