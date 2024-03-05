@@ -22,6 +22,26 @@ public class MemGameAccess implements GameAccess{
         gameIDs.add(gameID);
     }
 
+    public boolean blackPlayerFree(int gameID) {
+        return (gameList.get(gameID).blackUsername() == null);
+    }
+
+    public boolean whitePlayerFree(int gameID) {
+        return (gameList.get(gameID).whiteUsername() == null);
+    }
+
+    public void setBlackUser(int gameID, String username) {
+        GameData newGame = new GameData(gameID, gameList.get(gameID).whiteUsername(), username,gameList.get(gameID).gameName(),gameList.get(gameID).game());
+        gameList.remove(gameID);
+        gameList.put(gameID, newGame);
+    }
+
+    public void setWhiteUser(int gameID, String username) {
+        GameData newGame = new GameData(gameID, username, gameList.get(gameID).blackUsername(),gameList.get(gameID).gameName(),gameList.get(gameID).game());
+        gameList.remove(gameID);
+        gameList.put(gameID, newGame);
+    }
+
     public boolean gameExistsByName(String gameName) {
         return gameNameID.get(gameName) != null;
     }
@@ -63,4 +83,5 @@ public class MemGameAccess implements GameAccess{
         gameIDs.clear();
         gameNameID.clear();
     }
+
 }

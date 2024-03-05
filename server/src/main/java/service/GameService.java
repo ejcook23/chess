@@ -3,10 +3,8 @@ package service;
 import dataAccess.AuthAccess;
 import dataAccess.DataAccessException;
 import dataAccess.GameAccess;
-import model.CreateGameResponse;
-import model.GameData;
-import model.GameDataNoGame;
-import model.ListGamesResponse;
+import dataAccess.UserAccess;
+import model.*;
 
 import java.util.Collection;
 import java.util.ArrayList;
@@ -14,10 +12,12 @@ import java.util.ArrayList;
 public class GameService {
     AuthAccess authDAO;
     GameAccess gameDAO;
+    UserAccess userDAO;
 
-    public GameService(AuthAccess authDAO, GameAccess gameDAO) {
+    public GameService(AuthAccess authDAO, GameAccess gameDAO, UserAccess userDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
+        this.userDAO = userDAO;
 
     }
 
@@ -50,6 +50,24 @@ public class GameService {
             throw new DataAccessException("Error: unauthorized");
         }
     }
+
+    public void joinGame(JoinGameRequest request, String header) throws Exception {
+        String playerColor = request.playerColor();
+        int gameID = request.gameID();
+        if(authDAO.tokenExists(header)) {
+            if(gameDAO.gameExistsByID(gameID)) {
+                gameDAO.
+            } else {
+                throw new DataAccessException("Error: bad request");
+            }
+        } else {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+
+
+    }
+
 
 }
 

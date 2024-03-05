@@ -11,8 +11,9 @@ import javax.xml.crypto.Data;
 public class CreateGameTests {
     AuthAccess authDAO = new MemAuthAccess();
     GameAccess gameDAO = new MemGameAccess();
+    UserAccess userDAO = new MemUserAccess();
 
-    GameService service = new GameService(authDAO, gameDAO);
+    GameService service = new GameService(authDAO, gameDAO, userDAO);
 
     @Test
     public void createGamePos() throws DataAccessException {

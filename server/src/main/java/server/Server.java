@@ -29,7 +29,7 @@ public class Server {
         // INIT SERVICES
         dbService = new DBService(userDAO, authDAO, gameDAO);
         userService = new UserService(userDAO, authDAO);
-        gameService = new GameService(authDAO, gameDAO);
+        gameService = new GameService(authDAO, gameDAO, userDAO);
 
         // INIT HANDLERS
         clearHandler = new ClearHandler(dbService);
