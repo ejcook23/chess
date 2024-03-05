@@ -8,6 +8,7 @@ import model.*;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GameService {
     AuthAccess authDAO;
@@ -51,18 +52,39 @@ public class GameService {
         }
     }
 
-    public void joinGame(JoinGameRequest request, String header) throws Exception {
+    public void joinGame(JoinGameRequest request, String header) throws DataAccessException {
         String playerColor = request.playerColor();
         int gameID = request.gameID();
-        if(authDAO.tokenExists(header)) {
-            if(gameDAO.gameExistsByID(gameID)) {
-                gameDAO.
-            } else {
-                throw new DataAccessException("Error: bad request");
-            }
-        } else {
+
+        if(!authDAO.tokenExists(header)) {
             throw new DataAccessException("Error: unauthorized");
         }
+
+        if(gameDAO.gameExistsByID(gameID)) {
+            // IF THE PLAYER IS REQUESTING BLACK AND IT IS FREE..
+            if(Objects.equals(playerColor, "BLACK")) {
+                if(gameDAO.blackPlayerFree(gameID)) {
+                    gameDAO.setBlackUser(gameID, authDAO.getUserFromToken(header));
+                } else {
+                    throw new DataAccessException("Error: already taken");
+                }
+                // IF THE PLAYER IS REQUESTING WHITE AND IT IS FREE...
+            }
+            else if (Objects.equals(playerColor, "WHITE")) {
+                if(gameDAO.whitePlayerFree(gameID)) {
+                    gameDAO.setWhiteUser(gameID, authDAO.getUserFromToken(header));
+                } else {
+                    throw new DataAccessException("Error: already taken");
+                }
+            }
+            else if (playerColor != null) {
+                throw new DataAccessException("Error: bad request");
+            }
+        // GAME DOES NOT EXIST
+        } else {
+            throw new DataAccessException("Error: bad request");
+        }
+
 
 
 

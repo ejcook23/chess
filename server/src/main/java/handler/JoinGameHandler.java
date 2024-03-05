@@ -30,15 +30,23 @@ public class JoinGameHandler {
             JoinGameRequest request = json.fromJson(req.body(), JoinGameRequest.class);
 
             gameService.joinGame(request, header);
+            res.body("{}");
             res.status(200);
 
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             // if the error message equals... set to corresponding response and code
             res.body(json.toJson(new ErrorMsg(e.getMessage())));
 
-            if(Objects.equals(e.getMessage(), "Error: unauthorized")) {
+            if(Objects.equals(e.getMessage(), "Error: bad request")) {
+                res.status(400);
+            }
+            else if(Objects.equals(e.getMessage(), "Error: unauthorized")) {
                 res.status(401);
             }
+            else if(Objects.equals(e.getMessage(), "Error: already taken")) {
+                res.status(403);
+            }
+
             else {
                 res.body(json.toJson(new ErrorMsg("Error: ")));
                 res.status(500);

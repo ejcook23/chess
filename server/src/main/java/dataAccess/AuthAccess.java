@@ -10,4 +10,6 @@ public interface AuthAccess {
     String createAuth(String username);
 
     void delToken(String token);
+
+    String getUserFromToken(String token);
 }

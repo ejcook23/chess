@@ -30,4 +30,8 @@ public class MemAuthAccess implements AuthAccess{
         authTokens.remove(token);
     }
 
+    @Override
+    public String getUserFromToken(String token) {
+        return authTokens.get(token);
+    }
 }

@@ -21,6 +21,16 @@ public interface GameAccess {
 
     public void clearGames();
 
+    public boolean blackPlayerFree(int gameID);
+
+    public boolean whitePlayerFree(int gameID);
+
+    public void setBlackUser(int gameID, String username);
+
+    public void setWhiteUser(int gameID, String username);
+
+
+
 }
 
 
