@@ -2,6 +2,7 @@ package handler;
 
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
+import model.CreateGameRequest;
 import model.ErrorMsg;
 import service.GameService;
 import service.UserService;
@@ -27,17 +28,21 @@ public class CreateGameHandler {
         try {
             // Get the AUTH TOKEN from the header
             String header = req.headers("Authorization");
+            CreateGameRequest gameRequest = json.fromJson(req.body(), CreateGameRequest.class);
+            System.out.println(gameRequest.gameName());
             System.out.println(header);
-            // logout using the header
-            userService.logout(header);
-            res.body("{}");
+            // create the game and return the new gameID
+            res.body(json.toJson(gameService.createGame(header, gameRequest.gameName())));
             res.status(200);
 
         } catch (DataAccessException e) {
             // if the error message equals... set to corresponding response and code
             res.body(json.toJson(new ErrorMsg(e.getMessage())));
 
-            if(Objects.equals(e.getMessage(), "Error: unauthorized")) {
+            if(Objects.equals(e.getMessage(), "Error: bad request")) {
+                res.status(400);
+            }
+            if(Objects.equals(e.getMessage(),"Error: unauthorized")) {
                 res.status(401);
             }
             else {

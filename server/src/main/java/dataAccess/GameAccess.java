@@ -1,8 +1,20 @@
 package dataAccess;
 
 import chess.ChessGame;
+import model.GameData;
 
 public interface GameAccess {
 
-    void addGame(int gameID, String whiteUser, String blackUser, String gameName, ChessGame game);
+    void createGame(String gameName);
+
+    boolean gameExistsByID(int gameID);
+
+    boolean gameExistsByName(String gameName);
+
+    public int getGameIDByName(String gameName);
+
+    public GameData getGameData(Integer gameID);
+
 }
+
+
