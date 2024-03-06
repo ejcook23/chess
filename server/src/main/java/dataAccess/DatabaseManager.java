@@ -41,10 +41,55 @@ public class DatabaseManager {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
+
+            //SELECTING DATABASE
+            conn.setCatalog("chess");
+
+            //TODO IMPLEMENT TABLES HERE
+            var createUserDataTable = """
+            CREATE TABLE IF NOT EXISTS UserData (
+                username VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                PRIMARY KEY (username)
+            )""";
+
+            try (var createTableStatement = conn.prepareStatement(createUserDataTable)) {
+                createTableStatement.executeUpdate();
+            }
+
+            var createGameDataTable = """
+            CREATE TABLE IF NOT EXISTS GameData (
+                gameID INT NOT NULL AUTO_INCREMENT,
+                whiteUsername VARCHAR(255),
+                blackUsername VARCHAR(255),
+                gameName VARCHAR(255),
+                game VARCHAR(255),
+                PRIMARY KEY (gameID),
+            )""";
+
+
+            try (var createTableStatement = conn.prepareStatement(createGameDataTable)) {
+                createTableStatement.executeUpdate();
+            }
+
+            var createAuthDataTable = """
+            CREATE TABLE IF NOT EXISTS AuthData (
+                authToken VARCHAR(255) NOT NULL,
+                username VARCHAR(255),
+                PRIMARY KEY (authToken),
+            )""";
+
+            try (var createTableStatement = conn.prepareStatement(createAuthDataTable)) {
+                createTableStatement.executeUpdate();
+            }
+
+
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
+
 
     /**
      * Create a connection to the database and sets the catalog based upon the

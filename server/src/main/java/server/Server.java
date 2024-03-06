@@ -23,7 +23,7 @@ public class Server {
 
     public Server() {
         // INIT DAOS
-        UserAccess userDAO = new MemUserAccess();
+        UserAccess userDAO = new SQLUserAccess();
         AuthAccess authDAO = new MemAuthAccess();
         GameAccess gameDAO = new MemGameAccess();
         // INIT SERVICES
