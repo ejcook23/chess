@@ -57,8 +57,21 @@ public class SQLAuthAccess implements AuthAccess{
     }
 
     @Override
-    public void delToken(String token) {
+    public void delToken(String token) throws SQLException, DataAccessException {
+        System.out.println("\nDeleting auth token..");
 
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM AuthData WHERE authToken=?")) {
+                preparedStatement.setString(1, token);
+                preparedStatement.executeUpdate();
+
+            }
+        } catch (Exception e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+            throw e;
+        }
+
+        System.out.println("\ndeleted authtoken" + token);
     }
 
     @Override
