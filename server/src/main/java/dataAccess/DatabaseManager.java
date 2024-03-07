@@ -43,7 +43,7 @@ public class DatabaseManager {
             }
 
             //SELECTING DATABASE
-            conn.setCatalog("chess");
+            conn.setCatalog(databaseName);
 
             //TODO IMPLEMENT TABLES HERE
             var createUserDataTable = """
