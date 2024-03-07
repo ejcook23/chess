@@ -64,8 +64,8 @@ public class DatabaseManager {
                 whiteUsername VARCHAR(255),
                 blackUsername VARCHAR(255),
                 gameName VARCHAR(255),
-                game VARCHAR(255),
-                PRIMARY KEY (gameID),
+                game longtext,
+                PRIMARY KEY (gameID)
             )""";
 
 
@@ -77,7 +77,7 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS AuthData (
                 authToken VARCHAR(255) NOT NULL,
                 username VARCHAR(255),
-                PRIMARY KEY (authToken),
+                PRIMARY KEY (authToken)
             )""";
 
             try (var createTableStatement = conn.prepareStatement(createAuthDataTable)) {

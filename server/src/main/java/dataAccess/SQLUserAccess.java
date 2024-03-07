@@ -10,7 +10,7 @@ public class SQLUserAccess implements UserAccess {
         try {
             DatabaseManager.createDatabase();
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            System.out.println("[Error connecting to database] " + e.getMessage());
         }
     }
     @Override
@@ -31,10 +31,10 @@ public class SQLUserAccess implements UserAccess {
     @Override
     public void addUser(String username, String password, String email) throws DataAccessException {
         try(Connection conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO pet (name, type) VALUES(?, ?)")) {
-                preparedStatement.setString(1, name);
-                preparedStatement.setString(2, type);
-
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO UserData (username, password, email) VALUES(?, ?, ?)")) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, password);
+                preparedStatement.setString(3, email);
                 preparedStatement.executeUpdate();
 
             }
