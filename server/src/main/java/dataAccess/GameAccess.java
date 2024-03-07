@@ -18,17 +18,17 @@ public interface GameAccess {
 
     public GameData getGameData(Integer gameID) throws DataAccessException;
 
-    public Collection<GameData> getAllGames();
+    public Collection<GameData> getAllGames() throws DataAccessException;
 
-    public void clearGames();
+    public void clearGames() throws DataAccessException;
 
-    public boolean blackPlayerFree(int gameID);
+    public boolean blackPlayerFree(int gameID) throws DataAccessException;
 
-    public boolean whitePlayerFree(int gameID);
+    public boolean whitePlayerFree(int gameID) throws DataAccessException;
 
-    public void setBlackUser(int gameID, String username);
+    public void setBlackUser(int gameID, String username) throws DataAccessException;
 
-    public void setWhiteUser(int gameID, String username);
+    public void setWhiteUser(int gameID, String username) throws DataAccessException;
 
 
 

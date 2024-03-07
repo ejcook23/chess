@@ -6,6 +6,7 @@ import model.GameData;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -97,46 +98,114 @@ public class SQLGameAccess implements GameAccess{
                 preparedStatement.setString(1, Integer.toString(gameID));
                 try (var rs = preparedStatement.executeQuery()) {
                     if (rs.next()) {
-                        var gamejson = rs.getString("game");
-                        System.out.printf("\n[GET GAME DATA] JsonString: ", gamejson);
-                        return true;
+                        var gameJson = rs.getString("game");
+                        System.out.printf("\n[GET GAME DATA] JsonString: " + gameJson);
+                        return new Gson().fromJson(gameJson, GameData.class);
                     }
                 }
             }
         } catch(SQLException e) {
             System.out.println("SQL Access Error: " + e.getMessage());
         }
-        return false;
-    }
-
-    @Override
-    public Collection<GameData> getAllGames() {
         return null;
     }
 
     @Override
-    public void clearGames() {
-
+    public Collection<GameData> getAllGames() throws DataAccessException {
+        Collection<GameData> gameList = new ArrayList<>();
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT game FROM GameData")) {
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        var gameJson = rs.getString("game");
+                        System.out.printf("\n[GET ALL GAMES] JsonString: " + gameJson);
+                        GameData game = new Gson().fromJson(gameJson, GameData.class);
+                        gameList.add(game);
+                    }
+                }
+            }
+            return gameList;
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
+        return null;
     }
 
     @Override
-    public boolean blackPlayerFree(int gameID) {
-        return false;
+    public void clearGames() throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("TRUNCATE TABLE GameData")) {
+                preparedStatement.executeUpdate();
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
     }
 
     @Override
-    public boolean whitePlayerFree(int gameID) {
-        return false;
+    public boolean blackPlayerFree(int gameID) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT blackUsername FROM GameData WHERE gameID=?")) {
+                preparedStatement.setString(1, Integer.toString(gameID));
+                try (var rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
+                        var blackUsername = rs.getString("blackUsername");
+                        System.out.printf("\n[BLACK PLAYER FREE] USERNAME: %s", blackUsername);
+                        return false;
+                    }
+                }
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
+        return true;
     }
 
     @Override
-    public void setBlackUser(int gameID, String username) {
-
+    public boolean whitePlayerFree(int gameID) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT whiteUsername FROM GameData WHERE gameID=?")) {
+                preparedStatement.setString(1, Integer.toString(gameID));
+                try (var rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
+                        var whiteUsername = rs.getString("whiteUsername");
+                        System.out.printf("\n[BLACK PLAYER FREE] USERNAME: %s", whiteUsername);
+                        return false;
+                    }
+                }
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
+        return true;
     }
 
     @Override
-    public void setWhiteUser(int gameID, String username) {
+    public void setBlackUser(int gameID, String username) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("UPDATE GameData SET blackUsername=? WHERE gameID=?")) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, Integer.toString(gameID));
 
+                preparedStatement.executeUpdate();
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void setWhiteUser(int gameID, String username) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("UPDATE GameData SET whiteUsername=? WHERE gameID=?")) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, Integer.toString(gameID));
+
+                preparedStatement.executeUpdate();
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
     }
 
 }
