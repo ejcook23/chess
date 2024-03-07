@@ -56,7 +56,7 @@ public class MemGameAccess implements GameAccess{
         return gameList.get(gameID);
     }
     @Override
-    public int getGameIDByName(String gameName) {
+    public Integer getGameIDByName(String gameName) {
         return gameNameID.get(gameName);
     }
 

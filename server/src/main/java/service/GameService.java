@@ -6,6 +6,7 @@ import dataAccess.GameAccess;
 import dataAccess.UserAccess;
 import model.*;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -22,7 +23,7 @@ public class GameService {
 
     }
 
-    public CreateGameResponse createGame(String header, String gameName) throws DataAccessException {
+    public CreateGameResponse createGame(String header, String gameName) throws DataAccessException, SQLException {
         if(authDAO.tokenExists(header)) {
             if(!gameDAO.gameExistsByName(gameName)) {
                 System.out.println("Creating new game...");

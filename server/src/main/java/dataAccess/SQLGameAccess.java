@@ -9,8 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-
 public class SQLGameAccess implements GameAccess{
     @Override
     public void createGame(String gameName) throws DataAccessException, SQLException {
@@ -21,7 +19,7 @@ public class SQLGameAccess implements GameAccess{
                 preparedStatement.setString(1, null);
                 preparedStatement.setString(2, null);
                 preparedStatement.setString(3, gameName);
-                preparedStatement.setString(3, gameJson);
+                preparedStatement.setString(4, gameJson);
 
                 preparedStatement.executeUpdate();
 
@@ -72,7 +70,7 @@ public class SQLGameAccess implements GameAccess{
     }
 
     @Override
-    public int getGameIDByName(String gameName) throws DataAccessException, SQLException {
+    public Integer getGameIDByName(String gameName) throws DataAccessException, SQLException {
         try(Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM GameData WHERE gameName=?")) {
                 preparedStatement.setString(1, gameName);
@@ -88,7 +86,7 @@ public class SQLGameAccess implements GameAccess{
             System.out.println("SQL Access Error: " + e.getMessage());
             throw e;
         }
-        return 0;
+        return null;
     }
 
     @Override

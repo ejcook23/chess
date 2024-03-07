@@ -22,7 +22,7 @@ public class SQLAuthAccess implements AuthAccess{
             try (var preparedStatement = conn.prepareStatement("SELECT username FROM AuthData WHERE authToken=?")) {
                 preparedStatement.setString(1, token);
                 try (var rs = preparedStatement.executeQuery()) {
-                    while (rs.next()) {
+                    if (rs.next()) {
                         var username = rs.getString("username");
                         System.out.printf("[SELECT IF TOKEN EXISTS] Token Exists for Username: %s", username);
                         return true;
@@ -80,7 +80,7 @@ public class SQLAuthAccess implements AuthAccess{
             try (var preparedStatement = conn.prepareStatement("SELECT username FROM AuthData WHERE authToken=?")) {
                 preparedStatement.setString(1, token);
                 try (var rs = preparedStatement.executeQuery()) {
-                    while (rs.next()) {
+                    if (rs.next()) {
                         var username = rs.getString("username");
                         System.out.printf("[SELECT IF TOKEN EXISTS] Username: %s", username);
                         return username;

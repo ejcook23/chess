@@ -51,18 +51,16 @@ public class UserService {
     }
 
     public UserAndAuthResponse login(LoginRequest userData) throws DataAccessException, SQLException {
-        //HASHES user provided password
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String hashedPassword = encoder.encode(userData.password());
+
 
         // compares hashes of passwords
-        if(Objects.equals(userDAO.getUserPass(userData.username()), hashedPassword)) {
+        if(verifyUser(userData.username(), userData.password())) {
             System.out.println("User confirmed, creating new auth token.");
             String authToken = authDAO.createAuth(userData.username());
             return new UserAndAuthResponse(userData.username(),authToken);
         }
         // if there is no such user, or the username and password do not match
-        else if(userDAO.getUserPass(userData.username()) != null || !(Objects.equals(userDAO.getUserPass(userData.username()), userData.password()))) {
+        else if(userDAO.getUserPass(userData.username()) != null) {
             System.out.println("Error: unauthorized");
             throw new DataAccessException("Error: unauthorized");
         }
@@ -71,6 +69,14 @@ public class UserService {
             throw new DataAccessException("Error: ");
         }
 
+    }
+
+    boolean verifyUser(String username, String providedClearTextPassword) throws DataAccessException {
+        // read the previously hashed password from the database
+        var hashedPassword = userDAO.getUserPass(username);
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(providedClearTextPassword, hashedPassword);
     }
 
     public void logout(String token) throws DataAccessException, SQLException {

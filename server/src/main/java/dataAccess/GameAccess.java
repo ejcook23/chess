@@ -1,6 +1,5 @@
 package dataAccess;
 
-import chess.ChessGame;
 import model.GameData;
 
 import java.sql.SQLException;
@@ -14,7 +13,7 @@ public interface GameAccess {
 
     boolean gameExistsByName(String gameName) throws DataAccessException;
 
-    public int getGameIDByName(String gameName) throws DataAccessException, SQLException;
+    public Integer getGameIDByName(String gameName) throws DataAccessException, SQLException;
 
     public GameData getGameData(Integer gameID) throws DataAccessException;
 
