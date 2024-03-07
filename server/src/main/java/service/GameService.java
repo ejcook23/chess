@@ -40,13 +40,8 @@ public class GameService {
     }
 
     public ListGamesResponse listGames(String header) throws DataAccessException {
-        Collection<GameDataNoGame> games = new ArrayList<>();
         if(authDAO.tokenExists(header)) {
-            for(GameData game : gameDAO.getAllGames()) {
-                GameDataNoGame gameDataNoGame = new GameDataNoGame(game.gameID(),game.whiteUsername(),game.blackUsername(),game.gameName());
-                games.add(gameDataNoGame);
-            }
-            return new ListGamesResponse(games);
+            return new ListGamesResponse(gameDAO.getAllGames());
         }
         else {
             throw new DataAccessException("Error: unauthorized");

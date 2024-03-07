@@ -95,13 +95,21 @@ public class SQLGameAccess implements GameAccess{
     @Override
     public GameData getGameData(Integer gameID) throws DataAccessException {
         try(Connection conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT game FROM GameData WHERE gameID=?")) {
+            try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM GameData WHERE gameID=?")) {
                 preparedStatement.setString(1, Integer.toString(gameID));
                 try (var rs = preparedStatement.executeQuery()) {
                     if (rs.next()) {
+                        var rsGameID = rs.getString("gameID");
+                        var whiteUser = rs.getString("whiteUsername");
+                        var blackUser = rs.getString("blackUsername");
+                        var gameName = rs.getString("gameName");
                         var gameJson = rs.getString("game");
+
                         System.out.printf("\n[GET GAME DATA] JsonString: " + gameJson);
-                        return new Gson().fromJson(gameJson, GameData.class);
+                        ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+                        int gameIDint = Integer.parseInt(rsGameID);
+
+                        return new GameData(gameIDint,whiteUser,blackUser,gameName,game);
                     }
                 }
             }
@@ -116,13 +124,22 @@ public class SQLGameAccess implements GameAccess{
     public Collection<GameData> getAllGames() throws DataAccessException {
         Collection<GameData> gameList = new ArrayList<>();
         try(Connection conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT game FROM GameData")) {
+            try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM GameData")) {
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()) {
+                        var gameID = rs.getString("gameID");
+                        var whiteUser = rs.getString("whiteUsername");
+                        var blackUser = rs.getString("blackUsername");
+                        var gameName = rs.getString("gameName");
                         var gameJson = rs.getString("game");
+
                         System.out.printf("\n[GET ALL GAMES] JsonString: " + gameJson);
-                        GameData game = new Gson().fromJson(gameJson, GameData.class);
-                        gameList.add(game);
+                        ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+                        int gameIDint = Integer.parseInt(gameID);
+
+                        GameData gameInfo = new GameData(gameIDint,whiteUser,blackUser,gameName,game);
+
+                        gameList.add(gameInfo);
                     }
                 }
             }
