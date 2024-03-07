@@ -15,7 +15,7 @@ public interface GameAccess {
 
     public Integer getGameIDByName(String gameName) throws DataAccessException, SQLException;
 
-    public GameData getGameData(Integer gameID) throws DataAccessException;
+    public GameData getGameData(Integer gameID) throws DataAccessException, SQLException;
 
     public Collection<GameData> getAllGames() throws DataAccessException;
 

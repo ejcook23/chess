@@ -60,6 +60,18 @@ public class SQLAuthAccessTests {
         Assertions.assertFalse(authDAO.tokenExists(token));
     }
 
+    @Test
+    public void delTokenNeg() throws DataAccessException, SQLException {
+        authDAO.clearTokens();
+        String token = authDAO.createAuth("TestyUser");
+        String fakeToken = "21342341gasdfasf";
+        authDAO.delToken(fakeToken);
+        Assertions.assertFalse(authDAO.tokenExists(fakeToken));
+        Assertions.assertTrue(authDAO.tokenExists(token));
+    }
+
+
+
 
     @Test
     public void getUserFromTokenPos() throws DataAccessException, SQLException {

@@ -11,7 +11,7 @@ import java.util.Collection;
 
 public class SQLGameAccess implements GameAccess{
     @Override
-    public void createGame(String gameName) throws DataAccessException, SQLException {
+    public void createGame(String gameName) throws DataAccessException {
         ChessGame game = new ChessGame();
         var gameJson = new Gson().toJson(game);
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -25,8 +25,11 @@ public class SQLGameAccess implements GameAccess{
 
             } catch (Exception e) {
                 System.out.println("\n[CREATE GAME] SQL Access Error: " + e.getMessage());
-                throw e;
+                throw new DataAccessException(e.getMessage());
             }
+        } catch (Exception e) {
+            System.out.println("\nError getting connection.\n");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -38,14 +41,14 @@ public class SQLGameAccess implements GameAccess{
                     preparedStatement.setString(1, Integer.toString(gameID));
                     try (var rs = preparedStatement.executeQuery()) {
                         if (rs.next()) {
-                            var gameIDresult = rs.getString("gameID");
-                            System.out.printf("\n[GAME EXISTS BY ID] Game exists by ID: %s", gameIDresult);
+                            System.out.printf("\n[GAME EXISTS BY ID] Game exists by ID: %s", gameID);
                             return true;
                         }
                     }
                 }
-            } catch(SQLException e) {
+            } catch(Exception e) {
                 System.out.println("SQL Access Error: " + e.getMessage());
+                throw new DataAccessException(e.getMessage());
             }
             return false;
     }
@@ -57,20 +60,20 @@ public class SQLGameAccess implements GameAccess{
                 preparedStatement.setString(1, gameName);
                 try (var rs = preparedStatement.executeQuery()) {
                     if (rs.next()) {
-                        var username = rs.getString("username");
                         System.out.printf("\n[GAME EXISTS BY NAME] GAME Exists for GameName: %s", gameName);
                         return true;
                     }
                 }
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
         return false;
     }
 
     @Override
-    public Integer getGameIDByName(String gameName) throws DataAccessException, SQLException {
+    public Integer getGameIDByName(String gameName) throws DataAccessException {
         try(Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT gameID FROM GameData WHERE gameName=?")) {
                 preparedStatement.setString(1, gameName);
@@ -84,7 +87,7 @@ public class SQLGameAccess implements GameAccess{
             }
         } catch(SQLException e) {
             System.out.println("SQL Access Error: " + e.getMessage());
-            throw e;
+            throw new DataAccessException(e.getMessage());
         }
         return null;
     }
@@ -102,8 +105,9 @@ public class SQLGameAccess implements GameAccess{
                     }
                 }
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
         return null;
     }
@@ -123,10 +127,10 @@ public class SQLGameAccess implements GameAccess{
                 }
             }
             return gameList;
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
-        return null;
     }
 
     @Override
@@ -135,8 +139,9 @@ public class SQLGameAccess implements GameAccess{
             try (var preparedStatement = conn.prepareStatement("TRUNCATE TABLE GameData")) {
                 preparedStatement.executeUpdate();
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -149,12 +154,13 @@ public class SQLGameAccess implements GameAccess{
                     if (rs.next()) {
                         var blackUsername = rs.getString("blackUsername");
                         System.out.printf("\n[BLACK PLAYER FREE] USERNAME: %s", blackUsername);
-                        return false;
+                        return blackUsername == null;
                     }
                 }
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
         return true;
     }
@@ -168,12 +174,13 @@ public class SQLGameAccess implements GameAccess{
                     if (rs.next()) {
                         var whiteUsername = rs.getString("whiteUsername");
                         System.out.printf("\n[BLACK PLAYER FREE] USERNAME: %s", whiteUsername);
-                        return false;
+                        return whiteUsername == null;
                     }
                 }
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
         return true;
     }
@@ -187,8 +194,9 @@ public class SQLGameAccess implements GameAccess{
 
                 preparedStatement.executeUpdate();
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -201,8 +209,9 @@ public class SQLGameAccess implements GameAccess{
 
                 preparedStatement.executeUpdate();
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
     }
 

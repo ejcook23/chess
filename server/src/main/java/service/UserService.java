@@ -60,7 +60,7 @@ public class UserService {
             return new UserAndAuthResponse(userData.username(),authToken);
         }
         // if there is no such user, or the username and password do not match
-        else if(userDAO.getUserPass(userData.username()) != null) {
+        else if(userDAO.getUserPass(userData.username()) != null || !verifyUser(userData.username(), userData.password())) {
             System.out.println("Error: unauthorized");
             throw new DataAccessException("Error: unauthorized");
         }

@@ -2,28 +2,27 @@ package serviceTests;
 
 import dataAccess.DataAccessException;
 import dataAccess.GameAccess;
-import dataAccess.MemGameAccess;
+import dataAccess.SQLGameAccess;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
 public class SQLGameAccessTests {
-    GameAccess gameDAO = new MemGameAccess();
+    GameAccess gameDAO = new SQLGameAccess();
 
     @Test
     public void createGamePos() throws DataAccessException, SQLException {
         gameDAO.clearGames();
         gameDAO.createGame("TestGame");
         Assertions.assertNotNull(gameDAO.getAllGames());
-        Assertions.assertTrue(gameDAO.gameExistsByName("TestGame"));
     }
 
     @Test // NEED TO FIX THIS TEST.. not sure why it's not throwing.
     public void createGameNeg() throws DataAccessException {
         gameDAO.clearGames();
         Assertions.assertThrows(Exception.class, () -> gameDAO.createGame(null));
-        Assertions.assertNull(gameDAO.getAllGames());
+        Assertions.assertEquals(0, gameDAO.getAllGames().size()); //need to assert instead that the array is empty
     }
 
 
@@ -31,7 +30,7 @@ public class SQLGameAccessTests {
     public void gameExistsByIDPos() throws SQLException, DataAccessException {
         gameDAO.clearGames();
         gameDAO.createGame("TestGame");
-        int id = gameDAO.getGameIDByName("TestGame");
+        Integer id = gameDAO.getGameIDByName("TestGame");
         Assertions.assertTrue(gameDAO.gameExistsByID(id));
 
     }
@@ -47,6 +46,7 @@ public class SQLGameAccessTests {
     @Test
     public void gameExistsByNamePos() throws DataAccessException, SQLException {
         gameDAO.clearGames();
+        Assertions.assertFalse(gameDAO.gameExistsByName("TestGame"));
         gameDAO.createGame("TestGame");
         Assertions.assertTrue(gameDAO.gameExistsByName("TestGame"));
     }
@@ -74,26 +74,38 @@ public class SQLGameAccessTests {
 
 
     @Test
-    public void getGameDataPos() throws DataAccessException {
+    public void getGameDataPos() throws DataAccessException, SQLException {
         gameDAO.clearGames();
+        gameDAO.createGame("TestGame");
+        int id = gameDAO.getGameIDByName("TestGame");
+        Assertions.assertNotNull(gameDAO.getGameData(id));
 
 
     }
 
     @Test
-    public void getGameDataNeg() {
+    public void getGameDataNeg() throws DataAccessException, SQLException {
+        gameDAO.clearGames();
+        Assertions.assertNull(gameDAO.getGameData(1234));
 
     }
 
 
     @Test
-    public void getAllGamesPos() {
+    public void getAllGamesPos() throws DataAccessException, SQLException {
+        gameDAO.clearGames();
+        gameDAO.createGame("Game1");
+        gameDAO.createGame("Game2");
+        gameDAO.createGame("Game3");
+        Assertions.assertEquals(3, gameDAO.getAllGames().size());
+
 
     }
 
     @Test
-    public void getAllGamesNeg() {
-
+    public void getAllGamesNeg() throws DataAccessException {
+        gameDAO.clearGames();
+        Assertions.assertEquals(0,gameDAO.getAllGames().size());
     }
 
 
@@ -109,24 +121,38 @@ public class SQLGameAccessTests {
 
 
     @Test
-    public void blackPlayerFreePos() {
-
+    public void blackPlayerFreePos() throws SQLException, DataAccessException {
+        gameDAO.clearGames();
+        gameDAO.createGame("TestGame");
+        int id = gameDAO.getGameIDByName("TestGame");
+        Assertions.assertTrue(gameDAO.blackPlayerFree(id));
     }
 
     @Test
-    public void blackPlayerFreeNeg() {
-
+    public void blackPlayerFreeNeg() throws SQLException, DataAccessException {
+        gameDAO.clearGames();
+        gameDAO.createGame("TestGame");
+        int id = gameDAO.getGameIDByName("TestGame");
+        gameDAO.setBlackUser(id,"Bob");
+        Assertions.assertFalse(gameDAO.blackPlayerFree(id));
     }
 
 
     @Test
-    public void whitePlayerFreePos() {
-
+    public void whitePlayerFreePos() throws SQLException, DataAccessException {
+        gameDAO.clearGames();
+        gameDAO.createGame("TestGame");
+        int id = gameDAO.getGameIDByName("TestGame");
+        Assertions.assertTrue(gameDAO.whitePlayerFree(id));
     }
 
     @Test
-    public void whitePlayerFreeNeg() {
-
+    public void whitePlayerFreeNeg() throws DataAccessException, SQLException {
+        gameDAO.clearGames();
+        gameDAO.createGame("TestGame");
+        int id = gameDAO.getGameIDByName("TestGame");
+        gameDAO.setWhiteUser(id,"Bob");
+        Assertions.assertFalse(gameDAO.whitePlayerFree(id));
     }
 
 

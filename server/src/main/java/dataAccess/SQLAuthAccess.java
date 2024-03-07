@@ -11,8 +11,9 @@ public class SQLAuthAccess implements AuthAccess{
             try (var preparedStatement = conn.prepareStatement("TRUNCATE TABLE AuthData")) {
                 preparedStatement.executeUpdate();
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -25,18 +26,19 @@ public class SQLAuthAccess implements AuthAccess{
                     if (rs.next()) {
                         var username = rs.getString("username");
                         System.out.printf("[SELECT IF TOKEN EXISTS] Token Exists for Username: %s", username);
-                        return true;
+                        return username != null;
                     }
                 }
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
         return false;
     }
 
     @Override
-    public String createAuth(String username) throws SQLException, DataAccessException {
+    public String createAuth(String username) throws DataAccessException {
         System.out.println("\nMaking new auth token..");
         String newAuthToken = UUID.randomUUID().toString();
 
@@ -49,7 +51,7 @@ public class SQLAuthAccess implements AuthAccess{
             }
         } catch (Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
-            throw e;
+            throw new DataAccessException(e.getMessage());
         }
 
         System.out.println("\ninserted " + newAuthToken);
@@ -57,7 +59,7 @@ public class SQLAuthAccess implements AuthAccess{
     }
 
     @Override
-    public void delToken(String token) throws SQLException, DataAccessException {
+    public void delToken(String token) throws DataAccessException {
         System.out.println("\nDeleting auth token..");
 
         try(Connection conn = DatabaseManager.getConnection()) {
@@ -68,7 +70,7 @@ public class SQLAuthAccess implements AuthAccess{
             }
         } catch (Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
-            throw e;
+            throw new DataAccessException(e.getMessage());
         }
 
         System.out.println("\ndeleted authtoken" + token);
@@ -87,8 +89,9 @@ public class SQLAuthAccess implements AuthAccess{
                     }
                 }
             }
-        } catch(SQLException e) {
+        } catch(Exception e) {
             System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
         }
         return null;
     }
