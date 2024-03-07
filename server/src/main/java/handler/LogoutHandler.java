@@ -34,7 +34,7 @@ public class LogoutHandler {
             res.body("{}");
             res.status(200);
 
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             // if the error message equals... set to corresponding response and code
             res.body(json.toJson(new ErrorMsg(e.getMessage())));
 

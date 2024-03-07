@@ -73,7 +73,7 @@ public class UserService {
 
     }
 
-    public void logout(String token) throws DataAccessException {
+    public void logout(String token) throws DataAccessException, SQLException {
         if(authDAO.tokenExists(token)) {
             System.out.println("Logging user out (removing auth token)");
             authDAO.delToken(token);

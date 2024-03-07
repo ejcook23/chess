@@ -3,19 +3,20 @@ package dataAccess;
 import chess.ChessGame;
 import model.GameData;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 public interface GameAccess {
 
-    void createGame(String gameName);
+    void createGame(String gameName) throws DataAccessException, SQLException;
 
-    boolean gameExistsByID(int gameID);
+    boolean gameExistsByID(int gameID) throws DataAccessException;
 
-    boolean gameExistsByName(String gameName);
+    boolean gameExistsByName(String gameName) throws DataAccessException;
 
-    public int getGameIDByName(String gameName);
+    public int getGameIDByName(String gameName) throws DataAccessException, SQLException;
 
-    public GameData getGameData(Integer gameID);
+    public GameData getGameData(Integer gameID) throws DataAccessException;
 
     public Collection<GameData> getAllGames();
 

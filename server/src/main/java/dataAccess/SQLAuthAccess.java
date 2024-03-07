@@ -41,7 +41,7 @@ public class SQLAuthAccess implements AuthAccess{
         String newAuthToken = UUID.randomUUID().toString();
 
         try(Connection conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO AuthData (authToke , username) VALUES(?, ?)")) {
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO AuthData (authToken , username) VALUES(?, ?)")) {
                 preparedStatement.setString(1, newAuthToken);
                 preparedStatement.setString(2, username);
                 preparedStatement.executeUpdate();
