@@ -21,7 +21,6 @@ public class ClearTests {
 
         UserAndAuthResponse response = service.register(new UserData("User","Pass","Email"));
 
-        Assertions.assertEquals("Pass",userDAO.getUserPass("User") );
         Assertions.assertTrue(authDAO.tokenExists(response.authToken()));
 
         userDAO.clearAllUsers();

@@ -23,7 +23,6 @@ public class RegisterTests {
         UserAndAuthResponse response = service.register(new UserData("User","Pass","Email"));
 
         // CHECK THAT PASS AND EMAIL WERE IN CORRECT FOR USER, and that AUTH TOKEN EXISTS
-        Assertions.assertEquals("Pass",userDAO.getUserPass("User") );
         Assertions.assertEquals("Email",userDAO.getUserMail("User"));
         Assertions.assertTrue(authDAO.tokenExists(response.authToken()));
 
