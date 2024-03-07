@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import service.UserService;
 
 import javax.xml.crypto.Data;
+import java.sql.SQLException;
 
 public class LogoutTests {
 
@@ -19,7 +20,7 @@ public class LogoutTests {
     UserService service = new UserService(userDAO, authDAO);
 
     @Test
-    public void logoutPos() throws DataAccessException {
+    public void logoutPos() throws DataAccessException, SQLException {
 
         service.register(new UserData("User","Pass","Email"));
         UserAndAuthResponse response = service.login(new LoginRequest("User","Pass"));

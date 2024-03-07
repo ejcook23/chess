@@ -10,7 +10,7 @@ public class SQLUserAccess implements UserAccess {
         try {
             DatabaseManager.createDatabase();
         } catch (DataAccessException e) {
-            System.out.println("[Error connecting to database] " + e.getMessage());
+            System.out.println("\n[Error connecting to database] " + e.getMessage());
         }
     }
     @Override
@@ -21,15 +21,15 @@ public class SQLUserAccess implements UserAccess {
                 preparedStatement.setString(1, username);
                 try (var rs = preparedStatement.executeQuery()) {
                     while (rs.next()) {
-                        password = rs.getString("email");
+                        password = rs.getString("password");
 
-                        System.out.printf("[SELECT] Password: %s", password);
+                        System.out.printf("\n[SELECT FOR GET USER PASS] Password: %s", password);
                     }
                 }
                 return password;
             }
         } catch(SQLException e) {
-            System.out.println("SQL Access Error: " + e.getMessage());
+            System.out.println("\n[GET USER PASS] SQL Access Error: " + e.getMessage());
         }
         return password;
     }
@@ -44,13 +44,13 @@ public class SQLUserAccess implements UserAccess {
                     while (rs.next()) {
                         email = rs.getString("email");
 
-                        System.out.printf("[SELECT] Email: %s", email);
+                        System.out.printf("\n[SELECT FOR GET USER MAIL] Email: %s", email);
                     }
                 }
             return email;
             }
         } catch(SQLException e) {
-            System.out.println("SQL Access Error: " + e.getMessage());
+            System.out.println("\n[GET USER MAIL] SQL Access Error: " + e.getMessage());
         }
         return email;
     }
@@ -62,12 +62,12 @@ public class SQLUserAccess implements UserAccess {
                 preparedStatement.executeUpdate();
             }
         } catch(SQLException e) {
-            System.out.println("SQL Access Error: " + e.getMessage());
+            System.out.println("\n[CLEAR ALL USERS] SQL Access Error: " + e.getMessage());
         }
     }
 
     @Override
-    public void addUser(String username, String password, String email) throws DataAccessException {
+    public void addUser(String username, String password, String email) throws DataAccessException, SQLException {
         try(Connection conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("INSERT INTO UserData (username, password, email) VALUES(?, ?, ?)")) {
                 preparedStatement.setString(1, username);
@@ -76,8 +76,9 @@ public class SQLUserAccess implements UserAccess {
                 preparedStatement.executeUpdate();
 
             }
-        } catch(SQLException e) {
-            System.out.println("SQL Access Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("\n[ADD USER] SQL Access Error: " + e.getMessage());
+            throw e;
         }
     }
 }

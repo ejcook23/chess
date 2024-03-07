@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 
+import java.sql.SQLException;
+
 public class RegisterTests {
 
     UserAccess userDAO = new MemUserAccess();
@@ -15,7 +17,7 @@ public class RegisterTests {
     UserService service = new UserService(userDAO, authDAO);
 
     @Test
-    public void registerPos() throws DataAccessException {
+    public void registerPos() throws DataAccessException, SQLException {
 
         // REGISTER USER
         UserAndAuthResponse response = service.register(new UserData("User","Pass","Email"));

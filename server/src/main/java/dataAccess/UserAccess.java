@@ -2,6 +2,8 @@ package dataAccess;
 
 import model.UserData;
 
+import java.sql.SQLException;
+
 public interface UserAccess {
 
     String getUserPass(String username) throws DataAccessException;
@@ -12,7 +14,7 @@ public interface UserAccess {
     void clearAllUsers() throws DataAccessException;
 
     // CREATE A SINGLE USER
-    void addUser(String username, String password, String email) throws DataAccessException;
+    void addUser(String username, String password, String email) throws DataAccessException, SQLException;
 
 
 

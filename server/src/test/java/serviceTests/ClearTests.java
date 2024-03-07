@@ -7,11 +7,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 
+import java.sql.SQLException;
+
 public class ClearTests {
 
 
     @Test
-    public void clearPos() throws DataAccessException {
+    public void clearPos() throws DataAccessException, SQLException {
         UserAccess userDAO = new MemUserAccess();
         AuthAccess authDAO = new MemAuthAccess();
 

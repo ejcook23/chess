@@ -10,6 +10,7 @@ import org.eclipse.jetty.server.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.xml.crypto.Data;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class UserService {
@@ -23,7 +24,7 @@ public class UserService {
 
     }
 
-    public UserAndAuthResponse register(UserData user) throws DataAccessException {
+    public UserAndAuthResponse register(UserData user) throws DataAccessException, SQLException {
         // callsDAO functionality
         if(userDAO.getUserPass(user.username()) != null || userDAO.getUserMail(user.username()) != null) {
             System.out.println("Error: already taken");
@@ -49,7 +50,7 @@ public class UserService {
         return new UserAndAuthResponse(user.username(), authToken);
     }
 
-    public UserAndAuthResponse login(LoginRequest userData) throws DataAccessException{
+    public UserAndAuthResponse login(LoginRequest userData) throws DataAccessException, SQLException {
         //HASHES user provided password
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String hashedPassword = encoder.encode(userData.password());

@@ -2,6 +2,7 @@ package dataAccess;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class SQLAuthAccess implements AuthAccess{
     @Override
@@ -16,13 +17,43 @@ public class SQLAuthAccess implements AuthAccess{
     }
 
     @Override
-    public boolean tokenExists(String token) {
+    public boolean tokenExists(String token) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT username FROM AuthData WHERE authToken=?")) {
+                preparedStatement.setString(1, token);
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        var username = rs.getString("username");
+                        System.out.printf("[SELECT IF TOKEN EXISTS] Token Exists for Username: %s", username);
+                        return true;
+                    }
+                }
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
         return false;
     }
 
     @Override
-    public String createAuth(String username) {
-        return null;
+    public String createAuth(String username) throws SQLException, DataAccessException {
+        System.out.println("\nMaking new auth token..");
+        String newAuthToken = UUID.randomUUID().toString();
+
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO AuthData (authToke , username) VALUES(?, ?)")) {
+                preparedStatement.setString(1, newAuthToken);
+                preparedStatement.setString(2, username);
+                preparedStatement.executeUpdate();
+
+            }
+        } catch (Exception e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+            throw e;
+        }
+
+        System.out.println("\ninserted " + newAuthToken);
+        return newAuthToken;
     }
 
     @Override
@@ -31,7 +62,21 @@ public class SQLAuthAccess implements AuthAccess{
     }
 
     @Override
-    public String getUserFromToken(String token) {
+    public String getUserFromToken(String token) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT username FROM AuthData WHERE authToken=?")) {
+                preparedStatement.setString(1, token);
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        var username = rs.getString("username");
+                        System.out.printf("[SELECT IF TOKEN EXISTS] Username: %s", username);
+                        return username;
+                    }
+                }
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
         return null;
     }
 }

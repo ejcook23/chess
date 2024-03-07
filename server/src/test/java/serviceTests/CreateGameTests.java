@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import service.GameService;
 
+import java.sql.SQLException;
+
 
 public class CreateGameTests {
     AuthAccess authDAO = new MemAuthAccess();
@@ -15,7 +17,7 @@ public class CreateGameTests {
     GameService service = new GameService(authDAO, gameDAO, userDAO);
 
     @Test
-    public void createGamePos() throws DataAccessException {
+    public void createGamePos() throws DataAccessException, SQLException {
         String token = authDAO.createAuth("User");
         CreateGameResponse response = service.createGame(token, "testGame");
 
