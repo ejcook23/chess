@@ -7,6 +7,7 @@ import model.LoginRequest;
 import model.UserAndAuthResponse;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.xml.crypto.Data;
 import java.util.Objects;
@@ -35,8 +36,12 @@ public class UserService {
 
         System.out.println("Creating user and getting auth token...");
 
+        // ENCRYPT PASSWORD
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashedPassword = encoder.encode(user.password());
+
         //INSERT USER
-        userDAO.addUser(user.username(), user.password(), user.email());
+        userDAO.addUser(user.username(), hashedPassword, user.email());
 
         //CREATE AUTH
         String authToken = authDAO.createAuth(user.username());
@@ -45,8 +50,12 @@ public class UserService {
     }
 
     public UserAndAuthResponse login(LoginRequest userData) throws DataAccessException{
-        // If username and password match
-        if(Objects.equals(userDAO.getUserPass(userData.username()), userData.password())) {
+        //HASHES user provided password
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashedPassword = encoder.encode(userData.password());
+
+        // compares hashes of passwords
+        if(Objects.equals(userDAO.getUserPass(userData.username()), hashedPassword)) {
             System.out.println("User confirmed, creating new auth token.");
             String authToken = authDAO.createAuth(userData.username());
             return new UserAndAuthResponse(userData.username(),authToken);

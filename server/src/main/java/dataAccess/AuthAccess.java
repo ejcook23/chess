@@ -3,7 +3,7 @@ package dataAccess;
 import model.AuthData;
 
 public interface AuthAccess {
-    void clearTokens(); // finish this up
+    void clearTokens() throws DataAccessException; // finish this up
 
     boolean tokenExists(String token);
 

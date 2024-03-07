@@ -15,17 +15,55 @@ public class SQLUserAccess implements UserAccess {
     }
     @Override
     public String getUserPass(String username) throws DataAccessException {
-        return null;
+        String password = null;
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT password FROM UserData WHERE username=?")) {
+                preparedStatement.setString(1, username);
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        password = rs.getString("email");
+
+                        System.out.printf("[SELECT] Password: %s", password);
+                    }
+                }
+                return password;
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
+        return password;
     }
 
     @Override
     public String getUserMail(String username) throws DataAccessException {
-        return null;
+        String email = null;
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT email FROM UserData WHERE username=?")) {
+                preparedStatement.setString(1, username);
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        email = rs.getString("email");
+
+                        System.out.printf("[SELECT] Email: %s", email);
+                    }
+                }
+            return email;
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
+        return email;
     }
 
     @Override
     public void clearAllUsers() throws DataAccessException {
-
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("TRUNCATE TABLE UserData")) {
+                preparedStatement.executeUpdate();
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
     }
 
     @Override

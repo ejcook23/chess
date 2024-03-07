@@ -1,9 +1,18 @@
 package dataAccess;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public class SQLAuthAccess implements AuthAccess{
     @Override
-    public void clearTokens() {
-
+    public void clearTokens() throws DataAccessException{
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("TRUNCATE TABLE AuthData")) {
+                preparedStatement.executeUpdate();
+            }
+        } catch(SQLException e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+        }
     }
 
     @Override
