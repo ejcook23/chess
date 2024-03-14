@@ -45,7 +45,7 @@ public class DatabaseManager {
             //SELECTING DATABASE
             conn.setCatalog(databaseName);
 
-            //TODO IMPLEMENT TABLES HERE
+
             var createUserDataTable = """
             CREATE TABLE IF NOT EXISTS UserData (
                 username VARCHAR(255) NOT NULL,

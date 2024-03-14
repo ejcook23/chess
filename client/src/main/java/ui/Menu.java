@@ -1,8 +1,9 @@
+package ui;
+
 import java.util.Objects;
 import java.util.Scanner;
-import ui.ES;
 
-public class PreGameUI {
+public class Menu {
 
     public static void main(String[] args) {
         System.out.print(ES.SET_TEXT_COLOR_WHITE);
