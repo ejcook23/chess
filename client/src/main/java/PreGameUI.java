@@ -20,17 +20,28 @@ public class PreGameUI {
             String line = scanner.nextLine();
 
             if(line.equalsIgnoreCase("quit")) {
-                System.out.print("\n  \uD83D\uDD79 [GAME] Thanks for playing. Goodbye!\n\n");
+                System.out.print("  \uD83D\uDD79 [GAME] Thanks for playing. Goodbye!\n\n");
                 break;
             } else if (line.equalsIgnoreCase("help")) {
                 String prefix = ES.SET_TEXT_COLOR_GREEN;
-                System.out.print(prefix + "\n  register <USERNAME> <PASSWORD> <EMAIL>" + ES.SET_TEXT_COLOR_WHITE + " - to create an account\n");
+                System.out.print(prefix + "  register <USERNAME> <PASSWORD> <EMAIL>" + ES.SET_TEXT_COLOR_WHITE + " - to create an account\n");
                 System.out.print(prefix + "  login <USERNAME> <PASSWORD>" + ES.SET_TEXT_COLOR_WHITE + " - to play chess\n");
                 System.out.print(prefix + "  quit" + ES.SET_TEXT_COLOR_WHITE + " - to leave the game\n");
-                System.out.print(prefix + "  help" + ES.SET_TEXT_COLOR_WHITE + "- with possible commands\n\n");
+                System.out.print(prefix + "  help" + ES.SET_TEXT_COLOR_WHITE + "- with possible commands\n");
             } else if (line.equalsIgnoreCase("login")) {
+                System.out.print("  \uD83D\uDD79 [GAME] Please enter your username: ");
+                String username = scanner.nextLine();
+                System.out.print("  \uD83D\uDD79 [GAME] Please enter your password: ");
+                String password = scanner.nextLine();
+
 
             } else if (line.equalsIgnoreCase("register")) {
+                System.out.print("  \uD83D\uDD79 [GAME] Please enter a username: ");
+                String username = scanner.nextLine();
+                System.out.print("  \uD83D\uDD79 [GAME] Please enter your password: ");
+                String password = scanner.nextLine();
+                System.out.print("  \uD83D\uDD79 [GAME] Please confirm your password: ");
+                String passwordConfirm = scanner.nextLine();
 
             } else {
                 System.out.print("  \uD83D\uDD79 [GAME] Sorry, I don't know that command. Try typing \"help\" into the console for a list of available commands.\n");
