@@ -24,8 +24,17 @@ public class ServerFacade {
         URI uri = new URI("http://localhost:" + port + "/db");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod("DELETE");
+        System.out.println("\n [SERVER FACADE] WIPING DATABASE... \n");
+
         // Make the request
         http.connect();
+
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            UserAndAuthResponse response = new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
+            System.out.println(response);
+        }
+
     }
 
     // REGISTER USER

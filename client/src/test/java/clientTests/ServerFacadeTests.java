@@ -36,14 +36,14 @@ public class ServerFacadeTests {
     void registerPos() throws Exception {
         ServerFacade.wipeDB();
         UserAndAuthResponse response = ServerFacade.register("TestPlayer1", "pass5word", "TestPlayer1@em77ail.com");
+        assertNotNull(response.authToken());
     }
 
     @Test
     void registerNeg() throws Exception {
         ServerFacade.wipeDB();
         UserAndAuthResponse response = ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
-        assertThrows(Exception, () -> ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
-        assertTrue(authData.authToken().length() > 10);
+        assertThrows(Exception.class, () -> ServerFacade.register("player4", "pass5word", "p1@em77ail.com"));
     }
 
 
