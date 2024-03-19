@@ -5,8 +5,12 @@ import java.util.Scanner;
 import facade.ServerFacade;
 
 public class Menu {
+    static ServerFacade facade;
 
     public static void main(String[] args) throws Exception {
+
+        facade = new ServerFacade(8080);
+
         System.out.print(ES.SET_TEXT_COLOR_WHITE);
         System.out.print("\n=================================\n");
         System.out.println("\uD83D\uDD79 " + ES.SET_TEXT_BOLD + "Welcome to Big Chess Game 2" + ES.RESET_TEXT_BOLD_FAINT +" \uD83D\uDD79");
@@ -38,6 +42,10 @@ public class Menu {
 
                     System.out.print("  \uD83D\uDD79 [GAME] Please enter a username: ");
                     String username = scanner.nextLine();
+                    while(username == "") {
+                        System.out.print("  \uD83D\uDD79 [GAME] Sorry, username cannot be blank. Please enter a username: ");
+                        username = scanner.nextLine();
+                    }
                     System.out.print("  \uD83D\uDD79 [GAME] Please enter an email: ");
                     String email = scanner.nextLine();
                     System.out.print("  \uD83D\uDD79 [GAME] Please choose a password: ");
