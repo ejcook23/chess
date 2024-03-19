@@ -2,10 +2,11 @@ package ui;
 
 import java.util.Objects;
 import java.util.Scanner;
+import facade.ServerFacade;
 
 public class Menu {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.print(ES.SET_TEXT_COLOR_WHITE);
         System.out.print("\n=================================\n");
         System.out.println("\uD83D\uDD79 " + ES.SET_TEXT_BOLD + "Welcome to Big Chess Game 2" + ES.RESET_TEXT_BOLD_FAINT +" \uD83D\uDD79");
@@ -46,9 +47,8 @@ public class Menu {
                     if (!Objects.equals(password, passwordConfirm)) {
                         System.out.print("  \uD83D\uDD79 [GAME] Error! Passwords do not match. Registration failed.\n");
                     } else {
-                        // register the user
+                        ServerFacade.register(username,password,email);
                         System.out.print("  \uD83D\uDD79 [GAME] Registration successful. Logging you in...\n" );
-
                         break;
                     }
             } else {
