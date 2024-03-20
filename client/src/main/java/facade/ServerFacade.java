@@ -105,8 +105,36 @@ public class ServerFacade {
             return null;
         }
 
+    }
+
+
+
+    public static void logout(String authHeader) throws Exception {
+        // Specify the desired endpoint
+        URI uri = new URI("http://localhost:" + port + "/session");
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setRequestMethod("DELETE");
+
+        // Specify that we are going to write out data
+        http.setDoOutput(true);
+
+        // Write out a header
+        http.addRequestProperty("authorization", authHeader);
+
+        // Make the request
+        http.connect();
+
+        // Output the response body
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            UserAndAuthResponse response = new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
+        } catch (Exception e) {
+            System.out.print("  \uD83D\uDD79 [GAME] Sorry, " + e.getMessage() + "\n");
+        }
+
 
     }
+
 
 
 
