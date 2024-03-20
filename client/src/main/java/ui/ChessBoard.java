@@ -28,7 +28,12 @@ public class ChessBoard {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         populateBoardArrays(out, board, boardArray, colorArray);
-        printBoard(out, true,boardArray, colorArray);
+        //printBoard(out, true,boardArray, colorArray);
+
+        out.print(boardArray.toString());
+        out.print(colorArray.toString());
+
+        out.print("\n");
 
         printSquare(out, "white","black",BLACK_KING);
 
@@ -45,64 +50,70 @@ public class ChessBoard {
         for(int row = 1; row > 0 && row < 9;) {
             for(int col = 1; col > 0 && col < 9;) {
                 ChessPiece currPiece = board.getPiece(new ChessPosition(row,col));
-                ChessGame.TeamColor color = currPiece.getTeamColor();
 
-                // SETS THE PIECE STRING TO THE CORRECT TYPE FOR ITS COLOR
-                switch(currPiece.getPieceType() ) {
-                    case KING:
-                        if(color == BLACK) {
-                            pieceString = BLACK_KING;
-                        } else {
-                            pieceString = WHITE_KING;
-                        }
-                        break;
-                    case QUEEN:
-                        if(color == BLACK) {
-                            pieceString = BLACK_QUEEN;
-                        } else {
-                            pieceString = WHITE_QUEEN;
-                        }
-                        break;
-                    case KNIGHT:
-                        if(color == BLACK) {
-                            pieceString = BLACK_KNIGHT;
-                        } else {
-                            pieceString = WHITE_KNIGHT;
-                        }
-                        break;
-                    case BISHOP:
-                        if(color == BLACK) {
-                            pieceString = BLACK_BISHOP;
-                        } else {
-                            pieceString = WHITE_BISHOP;
-                        }
-                        break;
-                    case ROOK:
-                        if(color == BLACK) {
-                            pieceString = BLACK_ROOK;
-                        } else {
-                            pieceString = WHITE_ROOK;
-                        }
-                        break;
-                    case PAWN:
-                        if(color == BLACK) {
-                            pieceString = BLACK_PAWN;
-                        } else {
-                            pieceString = WHITE_PAWN;
-                        }
-                        break;
+                if (currPiece != null) {
+                    ChessGame.TeamColor color = currPiece.getTeamColor();
 
-                }
+                    // SETS THE PIECE STRING TO THE CORRECT TYPE FOR ITS COLOR
+                    switch(currPiece.getPieceType() ) {
+                        case KING:
+                            if(color == BLACK) {
+                                pieceString = BLACK_KING;
+                            } else {
+                                pieceString = WHITE_KING;
+                            }
+                            break;
+                        case QUEEN:
+                            if(color == BLACK) {
+                                pieceString = BLACK_QUEEN;
+                            } else {
+                                pieceString = WHITE_QUEEN;
+                            }
+                            break;
+                        case KNIGHT:
+                            if(color == BLACK) {
+                                pieceString = BLACK_KNIGHT;
+                            } else {
+                                pieceString = WHITE_KNIGHT;
+                            }
+                            break;
+                        case BISHOP:
+                            if(color == BLACK) {
+                                pieceString = BLACK_BISHOP;
+                            } else {
+                                pieceString = WHITE_BISHOP;
+                            }
+                            break;
+                        case ROOK:
+                            if(color == BLACK) {
+                                pieceString = BLACK_ROOK;
+                            } else {
+                                pieceString = WHITE_ROOK;
+                            }
+                            break;
+                        case PAWN:
+                            if(color == BLACK) {
+                                pieceString = BLACK_PAWN;
+                            } else {
+                                pieceString = WHITE_PAWN;
+                            }
+                            break;
 
-                // ADD COLOR TO ARRAY
-                if(color == BLACK) {
-                    colorArray.add("BLACK");
+                    }
+
+                    // ADD COLOR TO ARRAY
+                    if(color == BLACK) {
+                        colorArray.add("BLACK");
+                    } else {
+                        colorArray.add("WHITE");
+                    }
+
+                    // ADD PIECE TO ARRAY
+                    boardArray.add(pieceString);
                 } else {
-                    colorArray.add("WHITE");
+                    colorArray.add(null);
+                    boardArray.add(null);
                 }
-
-                // ADD PIECE TO ARRAY
-                boardArray.add(pieceString);
 
 
                 col++;
