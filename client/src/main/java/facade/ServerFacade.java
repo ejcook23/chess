@@ -63,11 +63,7 @@ public class ServerFacade {
         // Output the response body
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            UserAndAuthResponse response = new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
-            return response;
-        } catch (Exception e) {
-            System.out.print("  \uD83D\uDD79 [GAME] Sorry, " + e.getMessage() + "\n");
-            return null;
+            return new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
         }
 
     }
@@ -98,11 +94,7 @@ public class ServerFacade {
         // Output the response body
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            UserAndAuthResponse response = new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
-            return response;
-        } catch (Exception e) {
-            System.out.print("  \uD83D\uDD79 [GAME] Sorry, " + e.getMessage() + "\n");
-            return null;
+            return new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
         }
 
     }
@@ -128,8 +120,6 @@ public class ServerFacade {
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             UserAndAuthResponse response = new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
-        } catch (Exception e) {
-            System.out.print("  \uD83D\uDD79 [GAME] Sorry, " + e.getMessage() + "\n");
         }
 
 
