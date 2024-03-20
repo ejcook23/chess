@@ -80,6 +80,27 @@ public class ServerFacadeTests {
 
     }
 
+    @Test
+    void createGamePos() throws Exception {
+        ServerFacade.wipeDB();
+        UserAndAuthResponse response = ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
+        Assertions.assertDoesNotThrow(() -> ServerFacade.createGame(response.authToken(),"MyNewGame"));
+        Assertions.assertNotNull((response));
+
+    }
+
+
+    @Test
+    void createGameNeg() throws Exception {
+        ServerFacade.wipeDB();
+        assertThrows(Exception.class, () -> ServerFacade.createGame("sdfsdjf5jksf","gameNameHehe"));
+
+    }
+
+
+
+
+
 
 
 }

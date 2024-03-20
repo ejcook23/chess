@@ -3,6 +3,7 @@ package ui;
 import java.util.Objects;
 import java.util.Scanner;
 import facade.ServerFacade;
+import model.CreateGameResponse;
 import model.UserAndAuthResponse;
 
 public class Menu {
@@ -109,7 +110,11 @@ public class Menu {
                         System.out.print(prefix + "  help" + ES.SET_TEXT_COLOR_WHITE + " - to see possible command options\n");
 
                     } else if (input.equalsIgnoreCase("create")) {
-
+                        String prefix = ES.SET_TEXT_COLOR_GREEN;
+                        System.out.print("  \uD83D\uDD79 [GAME] Enter your game name here:");
+                        String gameName = scanner.nextLine();
+                        CreateGameResponse response =  ServerFacade.createGame(authToken,gameName);
+                        System.out.print("  \uD83D\uDD79 [GAME] Great! Game has been created with name " + prefix +  gameName + ES.SET_TEXT_COLOR_WHITE + " and ID " + prefix +  response.gameID() + ES.SET_TEXT_COLOR_WHITE + "!\n");
 
                     } else if (input.equalsIgnoreCase("list")) {
 
