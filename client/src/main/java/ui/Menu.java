@@ -1,5 +1,6 @@
 package ui;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 import facade.ServerFacade;
@@ -12,6 +13,7 @@ public class Menu {
     static ServerFacade facade;
     static String user;
     static String authToken;
+    static ArrayList<GameData> gameList = new ArrayList<>();
 
 
     public static void main(String[] args) throws Exception {
@@ -118,12 +120,14 @@ public class Menu {
 
                     } else if (input.equalsIgnoreCase("list")) {
                         ListGamesResponse response =  ServerFacade.listGames(authToken);
+                        gameList.clear();
                         if(!response.games().isEmpty()) {
                             int i = 0;
                             System.out.print("  \uD83D\uDD79 [GAME] Here are all the current games. Remember the number if you'd like to join!\n");
                             System.out.printf(prefix + "       %-5s %-15s %-15s %-15s\n", "#", "Name", "Black Player","White Player" + ES.SET_TEXT_COLOR_WHITE);
                             for(GameData g : response.games()) {
                                 i++;
+                                gameList.add(g);
                                 System.out.printf("       %-5s %-15s %-15s %-15s\n", i, g.gameName(), g.blackUsername(),g.whiteUsername());
                             }
                         } else {
@@ -131,7 +135,14 @@ public class Menu {
                         }
 
                     } else if (input.equalsIgnoreCase("join")) {
+                        System.out.print("  \uD83D\uDD79 [GAME] Please enter the game number: ");
+                        String gameNum = scanner.nextLine();
+                        System.out.print("  \uD83D\uDD79 [GAME] Please choose (by typing) WHITE or BLACK: ");
+                        String color = scanner.nextLine();
+                        int gameID = gameList.get((Integer.parseInt(gameNum)-1)).gameID();
+                        System.out.print("  \uD83D\uDD79 [GAME] Game Joined!\n");
 
+                        ServerFacade.joinGame(authToken,color,gameID);
 
                     } else if (input.equalsIgnoreCase("observe")) {
 

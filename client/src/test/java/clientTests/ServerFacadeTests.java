@@ -1,5 +1,6 @@
 package clientTests;
 
+import model.CreateGameResponse;
 import model.UserAndAuthResponse;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -45,7 +46,7 @@ public class ServerFacadeTests {
     void registerNeg() throws Exception {
         ServerFacade.wipeDB();
         UserAndAuthResponse response = ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
-        assertThrows(Exception.class, () -> ServerFacade.register("player4", "pass5word", "p1@em77ail.com"));
+        Assertions.assertThrows(Exception.class, () -> ServerFacade.register("player4", "pass5word", "p1@em77ail.com"));
     }
 
     @Test
@@ -60,7 +61,7 @@ public class ServerFacadeTests {
     @Test
     void loginNeg() throws Exception {
         ServerFacade.wipeDB();
-        assertThrows(Exception.class, () -> ServerFacade.login("player4","pass5word"));
+        Assertions.assertThrows(Exception.class, () -> ServerFacade.login("player4","pass5word"));
 
     }
 
@@ -78,7 +79,7 @@ public class ServerFacadeTests {
     @Test
     void logoutNeg() throws Exception {
         ServerFacade.wipeDB();
-        assertThrows(Exception.class, () -> ServerFacade.login("player4","pass5word"));
+        Assertions.assertThrows(Exception.class, () -> ServerFacade.login("player4","pass5word"));
 
     }
 
@@ -95,7 +96,7 @@ public class ServerFacadeTests {
     @Test
     void createGameNeg() throws Exception {
         ServerFacade.wipeDB();
-        assertThrows(Exception.class, () -> ServerFacade.createGame("sdfsdjf5jksf","gameNameHehe"));
+        Assertions.assertThrows(Exception.class, () -> ServerFacade.createGame("sdfsdjf5jksf","gameNameHehe"));
 
     }
 
@@ -112,7 +113,28 @@ public class ServerFacadeTests {
     @Test
     void listGamesNeg() throws Exception {
         ServerFacade.wipeDB();
-        assertThrows(Exception.class, () -> ServerFacade.listGames("3453425safeguard"));
+        Assertions.assertThrows(Exception.class, () -> ServerFacade.listGames("3453425safeguard"));
+
+    }
+
+    @Test
+    void joinGamePos() throws Exception {
+        ServerFacade.wipeDB();
+        UserAndAuthResponse response = ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
+        CreateGameResponse createResp = ServerFacade.createGame(response.authToken(),"gamey");
+        Assertions.assertDoesNotThrow(() -> ServerFacade.joinGame(response.authToken(),"WHITE",createResp.gameID()));
+        Assertions.assertDoesNotThrow(() -> ServerFacade.joinGame(response.authToken(),"BLACK",createResp.gameID()));
+
+
+    }
+
+
+    @Test
+    void joinGameNeg() throws Exception {
+        ServerFacade.wipeDB();
+        UserAndAuthResponse response = ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
+        CreateGameResponse createResp = ServerFacade.createGame(response.authToken(),"gamey");
+        Assertions.assertThrows(Exception.class, () -> ServerFacade.joinGame(response.authToken(),"BLUE",createResp.gameID()));
 
     }
 

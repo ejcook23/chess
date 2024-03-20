@@ -179,6 +179,34 @@ public class ServerFacade {
 
     }
 
+    public static void joinGame(String authHeader, String playerColor, int gameID) throws Exception {
+        // Specify the desired endpoint
+        URI uri = new URI("http://localhost:" + port + "/game");
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setRequestMethod("PUT");
+
+        // Specify that we are going to write out data
+        http.setDoOutput(true);
+
+        // Write out a header
+        http.addRequestProperty("authorization", authHeader);
+
+        JoinGameRequest body = new JoinGameRequest(playerColor, gameID);
+        try (var outputStream = http.getOutputStream()) {
+            var jsonBody = new Gson().toJson(body);
+            outputStream.write(jsonBody.getBytes());
+        }
+
+        // Make the request
+        http.connect();
+
+        // Output the response body
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+        }
+
+    }
+
 
 
 }
