@@ -42,7 +42,7 @@ public class Menu {
 
                     System.out.print("  \uD83D\uDD79 [GAME] Please enter a username: ");
                     String username = scanner.nextLine();
-                    while(username == "") {
+                    while(Objects.equals(username, "")) {
                         System.out.print("  \uD83D\uDD79 [GAME] Sorry, username cannot be blank. Please enter a username: ");
                         username = scanner.nextLine();
                     }
