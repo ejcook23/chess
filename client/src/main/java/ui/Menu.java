@@ -140,12 +140,17 @@ public class Menu {
                         System.out.print("  \uD83D\uDD79 [GAME] Please choose (by typing) WHITE or BLACK: ");
                         String color = scanner.nextLine();
                         int gameID = gameList.get((Integer.parseInt(gameNum)-1)).gameID();
-                        System.out.print("  \uD83D\uDD79 [GAME] Game Joined!\n");
 
-                        ServerFacade.joinGame(authToken,color,gameID);
+                        ServerFacade.joinGame(authToken,color.toUpperCase(),gameID);
+                        System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
 
                     } else if (input.equalsIgnoreCase("observe")) {
+                        System.out.print("  \uD83D\uDD79 [GAME] Please enter the game number: ");
+                        String gameNum = scanner.nextLine();
+                        int gameID = gameList.get((Integer.parseInt(gameNum)-1)).gameID();
 
+                        ServerFacade.joinGame(authToken,null,gameID);
+                        System.out.print("  \uD83D\uDD79 [GAME] Game joined as an observer.\n");
 
                     } else {
                         System.out.print("  \uD83D\uDD79 [GAME] Sorry, I don't know that command. Try typing \"help\" into the console for a list of available commands.\n");
