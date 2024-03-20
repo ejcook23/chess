@@ -6,6 +6,7 @@ import server.Server;
 
 import static org.junit.jupiter.api.Assertions.*;
 import facade.ServerFacade;
+import spark.utils.Assert;
 
 
 public class ServerFacadeTests {
@@ -22,7 +23,8 @@ public class ServerFacadeTests {
     }
 
     @AfterAll
-    static void stopServer() {
+    static void stopServer() throws Exception {
+        ServerFacade.wipeDB();
         server.stop();
     }
 
@@ -94,6 +96,23 @@ public class ServerFacadeTests {
     void createGameNeg() throws Exception {
         ServerFacade.wipeDB();
         assertThrows(Exception.class, () -> ServerFacade.createGame("sdfsdjf5jksf","gameNameHehe"));
+
+    }
+
+    @Test
+    void listGamesPos() throws Exception {
+        ServerFacade.wipeDB();
+        UserAndAuthResponse response = ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
+        Assertions.assertDoesNotThrow(() -> ServerFacade.listGames(response.authToken()));
+        Assertions.assertNotNull(ServerFacade.listGames(response.authToken()));
+
+    }
+
+
+    @Test
+    void listGamesNeg() throws Exception {
+        ServerFacade.wipeDB();
+        assertThrows(Exception.class, () -> ServerFacade.listGames("3453425safeguard"));
 
     }
 

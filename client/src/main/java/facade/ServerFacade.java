@@ -156,7 +156,7 @@ public class ServerFacade {
     }
 
 
-    public static ListGamesResponse listGames(String authHeader, String gameName) throws Exception {
+    public static ListGamesResponse listGames(String authHeader) throws Exception {
         // Specify the desired endpoint
         URI uri = new URI("http://localhost:" + port + "/game");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();

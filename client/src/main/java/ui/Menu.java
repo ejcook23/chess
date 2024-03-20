@@ -4,6 +4,8 @@ import java.util.Objects;
 import java.util.Scanner;
 import facade.ServerFacade;
 import model.CreateGameResponse;
+import model.GameData;
+import model.ListGamesResponse;
 import model.UserAndAuthResponse;
 
 public class Menu {
@@ -16,6 +18,7 @@ public class Menu {
 
         facade = new ServerFacade(8080);
         boolean loggedIn = false;
+        String prefix = ES.SET_TEXT_COLOR_GREEN;
         Scanner scanner = new Scanner(System.in);
 
         System.out.print(ES.SET_TEXT_COLOR_WHITE);
@@ -36,7 +39,6 @@ public class Menu {
                     System.out.print("  \uD83D\uDD79 [GAME] Thanks for playing. Goodbye!\n\n");
                     break;
                 } else if (line.equalsIgnoreCase("help")) {
-                    String prefix = ES.SET_TEXT_COLOR_GREEN;
                     System.out.print(prefix + "  register" + ES.SET_TEXT_COLOR_WHITE + " - to create an account\n");
                     System.out.print(prefix + "  login" + ES.SET_TEXT_COLOR_WHITE + " - to play chess\n");
                     System.out.print(prefix + "  quit" + ES.SET_TEXT_COLOR_WHITE + " - to leave the game\n");
@@ -101,7 +103,6 @@ public class Menu {
                         break;
 
                     } else if (input.equalsIgnoreCase("help")) {
-                        String prefix = ES.SET_TEXT_COLOR_GREEN;
                         System.out.print(prefix + "  create" + ES.SET_TEXT_COLOR_WHITE + " - to create a game\n");
                         System.out.print(prefix + "  list" + ES.SET_TEXT_COLOR_WHITE + " - to list all games\n");
                         System.out.print(prefix + "  join" + ES.SET_TEXT_COLOR_WHITE + " - to join a game\n");
@@ -110,14 +111,24 @@ public class Menu {
                         System.out.print(prefix + "  help" + ES.SET_TEXT_COLOR_WHITE + " - to see possible command options\n");
 
                     } else if (input.equalsIgnoreCase("create")) {
-                        String prefix = ES.SET_TEXT_COLOR_GREEN;
-                        System.out.print("  \uD83D\uDD79 [GAME] Enter your game name here:");
+                        System.out.print("  \uD83D\uDD79 [GAME] Enter your game name here: ");
                         String gameName = scanner.nextLine();
                         CreateGameResponse response =  ServerFacade.createGame(authToken,gameName);
                         System.out.print("  \uD83D\uDD79 [GAME] Great! Game has been created with name " + prefix +  gameName + ES.SET_TEXT_COLOR_WHITE + " and ID " + prefix +  response.gameID() + ES.SET_TEXT_COLOR_WHITE + "!\n");
 
                     } else if (input.equalsIgnoreCase("list")) {
-
+                        ListGamesResponse response =  ServerFacade.listGames(authToken);
+                        if(!response.games().isEmpty()) {
+                            int i = 0;
+                            System.out.print("  \uD83D\uDD79 [GAME] Here are all the current games. Remember the number if you'd like to join!\n");
+                            System.out.printf(prefix + "       %-5s %-15s %-15s %-15s\n", "#", "Name", "Black Player","White Player" + ES.SET_TEXT_COLOR_WHITE);
+                            for(GameData g : response.games()) {
+                                i++;
+                                System.out.printf("       %-5s %-15s %-15s %-15s\n", i, g.gameName(), g.blackUsername(),g.whiteUsername());
+                            }
+                        } else {
+                            System.out.print("  \uD83D\uDD79 [GAME] Sorry, looks like there are no games. Type \"create\" to make one!\n");
+                        }
 
                     } else if (input.equalsIgnoreCase("join")) {
 
