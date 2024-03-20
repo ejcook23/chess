@@ -31,8 +31,43 @@ public class ServerFacade {
 
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            UserAndAuthResponse response = new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
+            var response = new Gson().fromJson(inputStreamReader, Map.class);
             System.out.println(response);
+        }
+
+    }
+
+    // REGISTER USER
+    public static UserAndAuthResponse login(String username, String password) throws Exception {
+        // Specify the desired endpoint
+        URI uri = new URI("http://localhost:" + port + "/session");
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setRequestMethod("POST");
+
+        // Specify that we are going to write out data
+        http.setDoOutput(true);
+
+        // Write out a header
+        http.addRequestProperty("Content-Type", "application/json");
+
+        // Write out the body
+        LoginRequest body = new LoginRequest(username,password);
+        try (var outputStream = http.getOutputStream()) {
+            var jsonBody = new Gson().toJson(body);
+            outputStream.write(jsonBody.getBytes());
+        }
+
+        // Make the request
+        http.connect();
+
+        // Output the response body
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            UserAndAuthResponse response = new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
+            return response;
+        } catch (Exception e) {
+            System.out.print("  \uD83D\uDD79 [GAME] Sorry, " + e.getMessage() + "\n");
+            return null;
         }
 
     }
@@ -51,7 +86,7 @@ public class ServerFacade {
         http.addRequestProperty("Content-Type", "application/json");
 
         // Write out the body
-        UserData body = new UserData(username,password,email);
+        UserData body = new UserData(username, password, email);
         try (var outputStream = http.getOutputStream()) {
             var jsonBody = new Gson().toJson(body);
             outputStream.write(jsonBody.getBytes());
@@ -64,20 +99,14 @@ public class ServerFacade {
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             UserAndAuthResponse response = new Gson().fromJson(inputStreamReader, UserAndAuthResponse.class);
-            System.out.println(response);
             return response;
+        } catch (Exception e) {
+            System.out.print("  \uD83D\uDD79 [GAME] Sorry, " + e.getMessage() + "\n");
+            return null;
         }
 
+
     }
-
-
-
-
-
-
-
-
-
 
 
 

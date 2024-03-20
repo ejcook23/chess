@@ -46,6 +46,22 @@ public class ServerFacadeTests {
         assertThrows(Exception.class, () -> ServerFacade.register("player4", "pass5word", "p1@em77ail.com"));
     }
 
+    @Test
+    void loginPos() throws Exception {
+        ServerFacade.wipeDB();
+        ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
+        UserAndAuthResponse response = ServerFacade.login("player4","pass5word");
+        assertNotNull(response.authToken());
+    }
+
+
+    @Test
+    void loginNeg() throws Exception {
+        ServerFacade.wipeDB();
+        assertThrows(Exception.class, () -> ServerFacade.login("player4","pass5word"));
+
+    }
+
 
 
 }
