@@ -28,7 +28,9 @@ public class ChessBoard {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         populateBoardArrays(out, board, boardArray, colorArray);
-        //printBoard(out, true,boardArray, colorArray);
+        printBoard(out, true,boardArray, colorArray);
+
+        out.print("\n");
 
         out.print(boardArray.toString());
         out.print(colorArray.toString());
@@ -111,7 +113,7 @@ public class ChessBoard {
                     // ADD PIECE TO ARRAY
                     boardArray.add(pieceString);
                 } else {
-                    colorArray.add(null);
+                    colorArray.add("null");
                     boardArray.add(null);
                 }
 
@@ -125,9 +127,37 @@ public class ChessBoard {
     }
 
     public static void printBoard(PrintStream out, Boolean whiteOnBottom, ArrayList<String> boardArray, ArrayList<String> colorArray) {
+        int rowCounter = 0;
+
+
+        // DRAW BOARD
+        for (int counter = boardArray.size() - 1; counter >= 0; counter--) {
+            if(counter%8 == 0) {
+                out.print(SET_BG_COLOR_DARK_GREY + "\n");
+                rowCounter++;
+                continue;
+            }
+            if(counter%2 == 0) {
+                if(rowCounter%2 == 0) {
+                    printSquare(out,"BLACK",colorArray.get(counter),boardArray.get(counter));
+                } else {
+                    printSquare(out,"WHITE",colorArray.get(counter),boardArray.get(counter));
+                }
+
+            } else {
+                if(rowCounter%2 == 0) {
+                    printSquare(out,"WHITE",colorArray.get(counter),boardArray.get(counter));
+                } else {
+                    printSquare(out,"BLACK",colorArray.get(counter),boardArray.get(counter));
+                }
+
+            }
+        }
 
 
     }
+
+
 
     public static void printSquare(PrintStream out, String squareColor, String teamColor, String piece) {
         // SET BACKGROUND COLOR
