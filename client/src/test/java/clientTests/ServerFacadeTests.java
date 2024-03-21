@@ -18,7 +18,7 @@ public class ServerFacadeTests {
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8080);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade(port);
     }
@@ -137,6 +137,17 @@ public class ServerFacadeTests {
         Assertions.assertThrows(Exception.class, () -> ServerFacade.joinGame(response.authToken(),"BLUE",createResp.gameID()));
 
     }
+
+    @Test
+    void wipeDBPos() throws Exception {
+        UserAndAuthResponse response = ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
+        CreateGameResponse createResp = ServerFacade.createGame(response.authToken(),"gamey");
+        Assertions.assertDoesNotThrow(() -> ServerFacade.wipeDB());
+
+    }
+
+
+
 
 
 
