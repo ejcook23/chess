@@ -140,11 +140,14 @@ public class ServerFacadeTests {
 
     @Test
     void wipeDBPos() throws Exception {
+        ServerFacade.wipeDB();
         UserAndAuthResponse response = ServerFacade.register("player4", "pass5word", "p1@em77ail.com");
         CreateGameResponse createResp = ServerFacade.createGame(response.authToken(),"gamey");
         Assertions.assertDoesNotThrow(() -> ServerFacade.wipeDB());
 
     }
+
+
 
 
 
