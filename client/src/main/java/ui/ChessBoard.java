@@ -32,6 +32,10 @@ public class ChessBoard {
 
         out.print("\n");
 
+        printBoard(out, false,boardArray, colorArray);
+
+        out.print("\n");
+
         out.print(boardArray.toString());
         out.print(colorArray.toString());
 
@@ -131,27 +135,53 @@ public class ChessBoard {
 
 
         // DRAW BOARD
-        for (int counter = boardArray.size() - 1; counter >= 0; counter--) {
-            if(counter%8 == 0) {
-                out.print(SET_BG_COLOR_DARK_GREY + "\n");
-                rowCounter++;
-                continue;
-            }
-            if(counter%2 == 0) {
-                if(rowCounter%2 == 0) {
-                    printSquare(out,"BLACK",colorArray.get(counter),boardArray.get(counter));
-                } else {
-                    printSquare(out,"WHITE",colorArray.get(counter),boardArray.get(counter));
-                }
+        if (whiteOnBottom) {
+            for (int counter = boardArray.size() - 1; counter >= 0; counter--) {
+                if(counter%2 == 0) {
+                    if(rowCounter%2 == 0) {
+                        printSquare(out,"BLACK",colorArray.get(counter),boardArray.get(counter));
+                    } else {
+                        printSquare(out,"WHITE",colorArray.get(counter),boardArray.get(counter));
+                    }
 
-            } else {
-                if(rowCounter%2 == 0) {
-                    printSquare(out,"WHITE",colorArray.get(counter),boardArray.get(counter));
                 } else {
-                    printSquare(out,"BLACK",colorArray.get(counter),boardArray.get(counter));
-                }
+                    if(rowCounter%2 == 0) {
+                        printSquare(out,"WHITE",colorArray.get(counter),boardArray.get(counter));
+                    } else {
+                        printSquare(out,"BLACK",colorArray.get(counter),boardArray.get(counter));
+                    }
 
+                }
+                if(counter%8 == 0) {
+                    out.print(SET_BG_COLOR_DARK_GREY + "\n");
+                    rowCounter++;
+                }
             }
+
+        } else {
+
+            for (int counter = 0; counter <= boardArray.size() - 1; counter++) {
+                if(counter%2 == 0) {
+                    if(rowCounter%2 == 0) {
+                        printSquare(out,"WHITE",colorArray.get(counter),boardArray.get(counter));
+                    } else {
+                        printSquare(out,"BLACK",colorArray.get(counter),boardArray.get(counter));
+                    }
+
+                } else {
+                    if(rowCounter%2 == 0) {
+                        printSquare(out,"BLACK",colorArray.get(counter),boardArray.get(counter));
+                    } else {
+                        printSquare(out,"WHITE",colorArray.get(counter),boardArray.get(counter));
+                    }
+
+                }
+                if(counter%8 == 7) {
+                    out.print(SET_BG_COLOR_DARK_GREY + "\n");
+                    rowCounter++;
+                }
+            }
+
         }
 
 
