@@ -134,6 +134,7 @@ public class ChessBoard {
         int rowCounter = 0;
 
 
+
         // DRAW BOARD
         if (whiteOnBottom) {
             for (int counter = boardArray.size() - 1; counter >= 0; counter--) {
