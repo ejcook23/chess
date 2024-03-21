@@ -21,7 +21,11 @@ public class ChessBoard {
     static ArrayList<String> boardArray = new ArrayList<>();
     static ArrayList<String> colorArray = new ArrayList<>();
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+
+    }
+
+    public static void run() throws Exception {
         chess.ChessBoard board = new chess.ChessBoard();
         board.resetBoard();
 
@@ -36,12 +40,12 @@ public class ChessBoard {
 
         out.print("\n");
 
-        out.print(boardArray.toString());
-        out.print(colorArray.toString());
+        //out.print(boardArray.toString());
+        //out.print(colorArray.toString());
 
-        out.print("\n");
+        //out.print("\n");
 
-        printSquare(out, "white","black",BLACK_KING);
+        //printSquare(out, "white","black",BLACK_KING);
 
 
 
@@ -185,7 +189,7 @@ public class ChessBoard {
 
         }
 
-
+        out.print(SET_TEXT_COLOR_WHITE);
     }
 
 
