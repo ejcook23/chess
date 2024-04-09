@@ -3,26 +3,34 @@ package ui;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
+
+import facade.NotificationHandler;
 import facade.ServerFacade;
+import facade.WebSocketFacade;
 import model.CreateGameResponse;
 import model.GameData;
 import model.ListGamesResponse;
 import model.UserAndAuthResponse;
+import webSocketMessages.serverMessages.ServerMessage;
 
-public class Menu {
-    static ServerFacade facade;
-    static String user;
-    static String authToken;
-    static ArrayList<GameData> gameList = new ArrayList<>();
+public class Menu implements NotificationHandler {
+    ServerFacade facade;
+    WebSocketFacade wsfacade;
+    String user;
+    String authToken;
+    ArrayList<GameData> gameList = new ArrayList<>();
 
+    public Menu() throws Exception {
+        this.facade = new ServerFacade(8080);
+        this.wsfacade = new WebSocketFacade("http://localhost:8080",this);
+    }
 
     public static void main(String[] args) throws Exception {
+        Menu menu = new Menu();
 
-        facade = new ServerFacade(8080);
         boolean loggedIn = false;
         String prefix = ES.SET_TEXT_COLOR_GREEN;
         Scanner scanner = new Scanner(System.in);
-
         System.out.print(ES.SET_TEXT_COLOR_WHITE);
         System.out.print("\n=================================\n");
         System.out.println("\uD83D\uDD79 " + ES.SET_TEXT_BOLD + "Welcome to Big Chess Game 2" + ES.RESET_TEXT_BOLD_FAINT +" \uD83D\uDD79");
@@ -51,10 +59,10 @@ public class Menu {
                     System.out.print("  \uD83D\uDD79 [GAME] Please enter your password: ");
                     String password = scanner.nextLine();
                     UserAndAuthResponse response = ServerFacade.login(username, password);
-                    user = response.username();
-                    authToken = response.authToken();
+                    menu.user = response.username();
+                    menu.authToken = response.authToken();
                     loggedIn = true;
-                    System.out.print("  \uD83D\uDD79 [GAME] Welcome, " + user + "! Type \"help\" into the console to see available commands.\n");
+                    System.out.print("  \uD83D\uDD79 [GAME] Welcome, " + menu.user + "! Type \"help\" into the console to see available commands.\n");
 
                 } else if (line.equalsIgnoreCase("register")) {
 
@@ -76,9 +84,9 @@ public class Menu {
                         UserAndAuthResponse response = ServerFacade.register(username, password, email);
                         System.out.print("  \uD83D\uDD79 [GAME] Registration successful. Logging you in...\n");
                         loggedIn = true;
-                        user = response.username();
-                        authToken = response.authToken();
-                        System.out.print("  \uD83D\uDD79 [GAME] Welcome, " + user + "! Type \"help\" into the console to see available commands.\n");
+                        menu.user = response.username();
+                        menu.authToken = response.authToken();
+                        System.out.print("  \uD83D\uDD79 [GAME] Welcome, " + menu.user + "! Type \"help\" into the console to see available commands.\n");
                     }
                 } else {
                     System.out.print("  \uD83D\uDD79 [GAME] Sorry, I don't know that command. Try typing \"help\" into the console for a list of available commands.\n");
@@ -95,12 +103,12 @@ public class Menu {
             while(loggedIn) {
 
                 try {
-                    System.out.print("\uD83D\uDFE9 ["+ user + "] >> ");
+                    System.out.print("\uD83D\uDFE9 ["+ menu.user + "] >> ");
                     String input = scanner.nextLine();
 
                     if (input.equalsIgnoreCase("logout")) {
                         System.out.print("  \uD83D\uDD79 [GAME] Thanks for playing. Goodbye!\n");
-                        ServerFacade.logout(authToken);
+                        ServerFacade.logout(menu.authToken);
                         loggedIn = false;
                         break;
 
@@ -115,19 +123,19 @@ public class Menu {
                     } else if (input.equalsIgnoreCase("create")) {
                         System.out.print("  \uD83D\uDD79 [GAME] Enter your game name here: ");
                         String gameName = scanner.nextLine();
-                        CreateGameResponse response =  ServerFacade.createGame(authToken,gameName);
+                        CreateGameResponse response =  ServerFacade.createGame(menu.authToken,gameName);
                         System.out.print("  \uD83D\uDD79 [GAME] Great! Game has been created with name " + prefix +  gameName + ES.SET_TEXT_COLOR_WHITE + " and ID " + prefix +  response.gameID() + ES.SET_TEXT_COLOR_WHITE + "!\n");
 
                     } else if (input.equalsIgnoreCase("list")) {
-                        ListGamesResponse response =  ServerFacade.listGames(authToken);
-                        gameList.clear();
+                        ListGamesResponse response =  ServerFacade.listGames(menu.authToken);
+                        menu.gameList.clear();
                         if(!response.games().isEmpty()) {
                             int i = 0;
                             System.out.print("  \uD83D\uDD79 [GAME] Here are all the current games. Remember the number if you'd like to join!\n");
                             System.out.printf(prefix + "       %-5s %-15s %-15s %-15s\n", "#", "Name", "Black Player","White Player" + ES.SET_TEXT_COLOR_WHITE);
                             for(GameData g : response.games()) {
                                 i++;
-                                gameList.add(g);
+                                menu.gameList.add(g);
                                 System.out.printf("       %-5s %-15s %-15s %-15s\n", i, g.gameName(), g.blackUsername(),g.whiteUsername());
                             }
                         } else {
@@ -139,9 +147,9 @@ public class Menu {
                         String gameNum = scanner.nextLine();
                         System.out.print("  \uD83D\uDD79 [GAME] Please choose (by typing) WHITE or BLACK: ");
                         String color = scanner.nextLine();
-                        int gameID = gameList.get((Integer.parseInt(gameNum)-1)).gameID();
+                        int gameID = menu.gameList.get((Integer.parseInt(gameNum)-1)).gameID();
 
-                        ServerFacade.joinGame(authToken,color.toUpperCase(),gameID);
+                        ServerFacade.joinGame(menu.authToken,color.toUpperCase(),gameID);
 
                         System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
                         ChessBoard.run();
@@ -150,9 +158,9 @@ public class Menu {
                     } else if (input.equalsIgnoreCase("observe")) {
                         System.out.print("  \uD83D\uDD79 [GAME] Please enter the game number: ");
                         String gameNum = scanner.nextLine();
-                        int gameID = gameList.get((Integer.parseInt(gameNum))-1).gameID();
+                        int gameID = menu.gameList.get((Integer.parseInt(gameNum))-1).gameID();
 
-                        ServerFacade.joinGame(authToken,null,gameID);
+                        ServerFacade.joinGame(menu.authToken,null,gameID);
                         System.out.print("  \uD83D\uDD79 [GAME] Game joined as an observer.\n");
                         ChessBoard.run();
 
@@ -170,5 +178,10 @@ public class Menu {
 
             }
         }
+    }
+
+    @Override
+    public void notify(ServerMessage notification) {
+
     }
 }

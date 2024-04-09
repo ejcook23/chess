@@ -13,9 +13,9 @@ public class WebSocketServer {
     public void onMessage(Session session, String msg) throws Exception {
         UserGameCommand command = readJson(msg, UserGameCommand.class);
 
-        var conn = getConnection(command.authToken, session);
+        var conn = getConnection(command.getAuthString(), session);
         if (conn != null) {
-            switch (command.commandType) {
+            switch (command.getCommandType()) {
                 case JOIN_PLAYER -> join(conn, msg);
                 case JOIN_OBSERVER -> observe(conn, msg);
                 case MAKE_MOVE -> move(conn, msg));

@@ -1,12 +1,17 @@
 package facade;
 
+import com.google.gson.Gson;
+import webSocketMessages.serverMessages.ServerMessage;
+
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import javax.websocket.*;
 
 public class WebSocketFacade {
 
-
-
-
+    private NotificationHandler notificationHandler;
+    private Session session;
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler) throws Exception {
         try {
@@ -21,12 +26,18 @@ public class WebSocketFacade {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class);
+                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
                     notificationHandler.notify(notification);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
-            throw new ResponseException(500, ex.getMessage());
+            throw new Exception(ex.getMessage());
         }
     }
+
+    public void send(String msg) throws Exception {
+        this.session.getBasicRemote().sendText(msg);
+    }
+
+
 }
