@@ -47,6 +47,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
+        Spark.webSocket("/connect", WebSocketServer.class);
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", clearHandler::handle);
 
@@ -75,6 +76,7 @@ public class Server {
 
         Server sparkServer = new Server();
         sparkServer.run(8080);
+
 
 
     }

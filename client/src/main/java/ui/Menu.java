@@ -142,6 +142,7 @@ public class Menu {
                         int gameID = gameList.get((Integer.parseInt(gameNum)-1)).gameID();
 
                         ServerFacade.joinGame(authToken,color.toUpperCase(),gameID);
+
                         System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
                         ChessBoard.run();
 
