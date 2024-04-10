@@ -163,7 +163,7 @@ public class Menu implements NotificationHandler {
                         ServerFacade.joinGame(menu.authToken,color.toUpperCase(),gameID);
                         JoinPlayer joinPlayer = new JoinPlayer(menu.authToken, gameID, teamColor);
                         menu.wsfacade.send(new Gson().toJson(joinPlayer));
-                        
+
 
                         System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
                         ChessBoard.run();
@@ -195,7 +195,23 @@ public class Menu implements NotificationHandler {
     }
 
     @Override
-    public void notify(ServerMessage notification) {
+    public void onMessage(String json) {
+        ServerMessage notification = new Gson().fromJson(json, ServerMessage.class);
+        ;
 
+        switch (notification.getServerMessageType()) {
+            case ERROR -> printError(json);
+            case NOTIFICATION -> printNotification(json);
+            case LOAD_GAME -> printLoadGame(json);
+        }
+    }
+
+    private void printLoadGame(String json) {
+    }
+
+    private void printNotification(String json) {
+    }
+
+    private void printError(String json) {
     }
 }

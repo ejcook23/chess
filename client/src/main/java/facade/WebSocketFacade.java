@@ -25,11 +25,9 @@ public class WebSocketFacade {
 
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-                @Override
                 public void onMessage(String message) {
                     System.out.print("Client received message.");
-                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                    notificationHandler.notify(notification);
+                    notificationHandler.onMessage(message);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

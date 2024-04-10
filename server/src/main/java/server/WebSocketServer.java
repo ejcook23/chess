@@ -5,13 +5,17 @@ import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.SQLGameAccess;
 import model.GameData;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import webSocketMessages.serverMessages.*;
+import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.ServerMessage.ServerMessageType;
 import webSocketMessages.userCommands.*;
 import server.websocket.Connection;
+
+import java.io.IOException;
 
 import static webSocketMessages.serverMessages.ServerMessage.ServerMessageType.*;
 import static webSocketMessages.userCommands.UserGameCommand.CommandType.*;
@@ -38,10 +42,17 @@ public class WebSocketServer {
                 case RESIGN -> resign(conn, msg);
             }
         } else {
-            //Connection.sendError(session.getRemote(), "unknown user");
+            sendError(conn, "Error: Unknown User!");
+
         }
     }
 
+    private void sendError(Connection conn, String errorMsg) throws IOException {
+        Error error = new Error(ERROR,errorMsg);
+        String errorJson = new Gson().toJson(error);
+        conn.send(errorJson);
+
+    }
 
 
     private void resign(Connection conn, String msg) {
@@ -64,13 +75,15 @@ public class WebSocketServer {
         // GET GAME DATA FROM DB USING GAMEID
         SQLGameAccess SQLGameAccess = new SQLGameAccess();
         GameData gameData = SQLGameAccess.getGameData(gameID);
-        ChessBoard board = gameData.game().getBoard();
         // CREATE LOAD GAME MESSAGE TO SEND BACK
-        LoadGame loadGame = new LoadGame(LOAD_GAME, board);
+        LoadGame loadGame = new LoadGame(LOAD_GAME, gameData);
         String json = new Gson().toJson(loadGame);
 
         System.out.println("Sending message to client...");
         //SEND MESSAGE BACK TO CLIENT
+        Notification message = new Notification(NOTIFICATION, "User Joined the game");
+        String notifJson = new Gson().toJson(message);
+        connectionManager.broadcast(conn.authString, notifJson);
         conn.send(json);
 
 

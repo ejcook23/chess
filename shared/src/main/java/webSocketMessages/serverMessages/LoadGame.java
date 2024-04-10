@@ -5,13 +5,13 @@ import model.GameData;
 
 public class LoadGame extends ServerMessage{
 
-    ChessBoard game;
+    GameData game;
 
-    public ChessBoard getGame() {
+    public GameData getGame() {
         return game;
     }
 
-    public LoadGame(ServerMessageType type, ChessBoard game) {
+    public LoadGame(ServerMessageType type, GameData game) {
         super(type);
         this.game = game;
 

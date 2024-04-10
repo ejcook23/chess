@@ -19,12 +19,12 @@ public class ConnectionManager {
         connections.remove(authString);
     }
 
-    public void broadcast(String excludeAuthString, ServerMessage notification) throws IOException {
+    public void broadcast(String excludeAuthString, String notification) throws IOException {
         var removeList = new ArrayList<server.websocket.Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.authString.equals(excludeAuthString)) {
-                    c.send(notification.toString());
+                    c.send(notification);
                 }
             } else {
                 removeList.add(c);

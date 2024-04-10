@@ -21,11 +21,15 @@ public class Server {
     private final ListGamesHandler listGamesHandler;
     private final JoinGameHandler joinGameHandler;
 
+    private WebSocketServer webSocketServer;
+
+
     public Server() {
         // INIT DAOS
         UserAccess userDAO = new SQLUserAccess();
         AuthAccess authDAO = new SQLAuthAccess();
         GameAccess gameDAO = new SQLGameAccess();
+        this.webSocketServer = new WebSocketServer();
         // INIT SERVICES
         dbService = new DBService(userDAO, authDAO, gameDAO);
         userService = new UserService(userDAO, authDAO);
@@ -47,8 +51,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        Spark.webSocket("/connect", WebSocketServer.class);
-
+        Spark.webSocket("/connect", webSocketServer);
 
         Spark.delete("/db", clearHandler::handle);
 

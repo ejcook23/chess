@@ -4,21 +4,15 @@ import static webSocketMessages.serverMessages.ServerMessage.ServerMessageType.N
 
 public class Notification extends ServerMessage{
 
-    String notification;
+    String message;
 
-    public ServerMessageType getMessage() {
+    public String getMessage() {
         return message;
-    }
-
-    ServerMessageType message = NOTIFICATION;
-
-    public String getErrorMessage() {
-        return notification;
     }
 
     public Notification(ServerMessageType type, String notification) {
         super(type);
-        this.notification = notification;
+        this.message = notification;
 
     }
 }

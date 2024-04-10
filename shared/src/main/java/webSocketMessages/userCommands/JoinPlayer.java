@@ -8,12 +8,6 @@ public class JoinPlayer extends UserGameCommand{
 
     Integer gameID;
     ChessGame.TeamColor playerColor;
-    CommandType command = JOIN_PLAYER;
-
-    @Override
-    public CommandType getCommandType() {
-        return command;
-    }
 
     public ChessGame.TeamColor getTeamColor() {
         return playerColor;
@@ -23,6 +17,8 @@ public class JoinPlayer extends UserGameCommand{
         super(authToken);
         this.gameID = gameID;
         this.playerColor = playerColor;
+        commandType = JOIN_PLAYER;
+
     }
 
     public Integer getGameID() {
