@@ -9,6 +9,10 @@ public class MakeMove extends UserGameCommand{
     Integer gameID;
     ChessMove move;
 
+    public ChessMove getMove() {
+        return move;
+    }
+
     public Integer getGameID() {
         return gameID;
     }

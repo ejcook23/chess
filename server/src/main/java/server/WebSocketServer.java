@@ -2,6 +2,8 @@ package server;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.SQLAuthAccess;
@@ -28,6 +30,9 @@ import static webSocketMessages.userCommands.UserGameCommand.CommandType.*;
 public class WebSocketServer {
 
     ConnectionManager connectionManager = new ConnectionManager();
+    SQLGameAccess SQLGameAccess = new SQLGameAccess();
+    SQLAuthAccess SQLAuthAccess = new SQLAuthAccess();
+    SQLUserAccess SQLUserAccess = new SQLUserAccess();
 
 
     @OnWebSocketMessage
@@ -65,12 +70,33 @@ public class WebSocketServer {
     private void leave(Connection conn, String msg) {
     }
 
-    private void move(Connection conn, String msg) {
+    private void move(Connection conn, String msg) throws Exception {
+        MakeMove makeMove = new Gson().fromJson(msg, MakeMove.class);
+        Integer gameID = makeMove.getGameID();
+        ChessMove move = makeMove.getMove();
+        GameData game = SQLGameAccess.getGameData(gameID);
+        String username = SQLAuthAccess.getUserFromToken(makeMove.getAuthString());
+
+        // make the chess move
+        game.game().makeMove(move);
+        String chessGameJson = new Gson().toJson(game.game());
+        SQLGameAccess.updateGame(gameID, chessGameJson);
+
+        GameData updatedGame = SQLGameAccess.getGameData(gameID);
+        String gameDataJson = new Gson().toJson(updatedGame);
+
+        // BROADCAST LOAD GAME
+        connectionManager.broadcast(null, gameDataJson);
+
+        // BROADCAST NOTIFICATION
+        Notification message = new Notification(NOTIFICATION, username + " made a move.");
+        String notifJson = new Gson().toJson(message);
+        connectionManager.broadcast(conn.authString, notifJson);
+
+
     }
 
     private void observe(Connection conn, String msg) throws Exception {
-        SQLGameAccess SQLGameAccess = new SQLGameAccess();
-        SQLAuthAccess SQLAuthAccess = new SQLAuthAccess();
         JoinObserver joinObserver = new Gson().fromJson(msg, JoinObserver.class);
         // serialize into join observer class, now we have GameID
         Integer gameID = joinObserver.getGameID();
@@ -94,15 +120,13 @@ public class WebSocketServer {
             Notification message = new Notification(NOTIFICATION, username + " joined the game as an observer.");
             String notifJson = new Gson().toJson(message);
             connectionManager.broadcast(conn.authString, notifJson);
-            // SEND LOADGAME BACK TO CLIENT
+            // SEND LOAD GAME BACK TO CLIENT
             conn.send(json);
         }
     }
 
     private void join(Connection conn, String msg) throws Exception {
         // NEED TO DO SOME CHECKS FIRST
-        SQLGameAccess SQLGameAccess = new SQLGameAccess();
-        SQLAuthAccess SQLAuthAccess = new SQLAuthAccess();
         JoinPlayer joinPlayer = new Gson().fromJson(msg, JoinPlayer.class);
         // serialize into join player class, you have the gameID
         Integer gameID = joinPlayer.getGameID();
