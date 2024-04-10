@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessBoard;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.SQLGameAccess;
@@ -63,10 +64,10 @@ public class WebSocketServer {
         // GET GAME DATA FROM DB USING GAMEID
         SQLGameAccess SQLGameAccess = new SQLGameAccess();
         GameData gameData = SQLGameAccess.getGameData(gameID);
-
+        ChessBoard board = gameData.game().getBoard();
         // CREATE LOAD GAME MESSAGE TO SEND BACK
-        LoadGame loadGame = new LoadGame(LOAD_GAME, gameData);
-        var json = new Gson().toJson(loadGame);
+        LoadGame loadGame = new LoadGame(LOAD_GAME, board);
+        String json = new Gson().toJson(loadGame);
 
         System.out.println("Sending message to client...");
         //SEND MESSAGE BACK TO CLIENT
