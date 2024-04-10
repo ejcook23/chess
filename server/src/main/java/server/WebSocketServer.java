@@ -68,7 +68,35 @@ public class WebSocketServer {
     private void move(Connection conn, String msg) {
     }
 
-    private void observe(Connection conn, String msg) {
+    private void observe(Connection conn, String msg) throws Exception {
+        SQLGameAccess SQLGameAccess = new SQLGameAccess();
+        SQLAuthAccess SQLAuthAccess = new SQLAuthAccess();
+        JoinObserver joinObserver = new Gson().fromJson(msg, JoinObserver.class);
+        // serialize into join observer class, now we have GameID
+        Integer gameID = joinObserver.getGameID();
+
+        // GET GAME DATA FROM DB USING GAMEID
+        GameData gameData = SQLGameAccess.getGameData(gameID);
+        String username = SQLAuthAccess.getUserFromToken(joinObserver.getAuthString());
+
+        if(!SQLGameAccess.gameExistsByID(gameID)) {
+            sendError(conn, "Error: Game does not exist by that ID!");
+        } else if (username == null) {
+            sendError(conn, "Error: Bad AuthToken!");
+        } else {
+
+            // CREATE LOAD GAME MESSAGE TO SEND BACK
+            LoadGame loadGame = new LoadGame(LOAD_GAME, gameData);
+            String json = new Gson().toJson(loadGame);
+
+            System.out.println("Sending message to client...");
+            //BROADCAST MESSAGE
+            Notification message = new Notification(NOTIFICATION, username + " joined the game as an observer.");
+            String notifJson = new Gson().toJson(message);
+            connectionManager.broadcast(conn.authString, notifJson);
+            // SEND LOADGAME BACK TO CLIENT
+            conn.send(json);
+        }
     }
 
     private void join(Connection conn, String msg) throws Exception {
@@ -78,7 +106,6 @@ public class WebSocketServer {
         JoinPlayer joinPlayer = new Gson().fromJson(msg, JoinPlayer.class);
         // serialize into join player class, you have the gameID
         Integer gameID = joinPlayer.getGameID();
-
 
         // GET GAME DATA FROM DB USING GAMEID
         GameData gameData = SQLGameAccess.getGameData(gameID);
@@ -98,7 +125,7 @@ public class WebSocketServer {
 
             System.out.println("Sending message to client...");
             //SEND MESSAGE BACK TO CLIENT
-            Notification message = new Notification(NOTIFICATION, "User Joined the game");
+            Notification message = new Notification(NOTIFICATION, username + " Joined the game as " + joinPlayer.getPlayerColor().toString());
             String notifJson = new Gson().toJson(message);
             connectionManager.broadcast(conn.authString, notifJson);
             conn.send(json);
