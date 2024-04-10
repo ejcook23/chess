@@ -13,7 +13,8 @@ import model.CreateGameResponse;
 import model.GameData;
 import model.ListGamesResponse;
 import model.UserAndAuthResponse;
-import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.serverMessages.*;
+import webSocketMessages.serverMessages.Error;
 import webSocketMessages.userCommands.JoinPlayer;
 
 public class Menu implements NotificationHandler {
@@ -207,11 +208,18 @@ public class Menu implements NotificationHandler {
     }
 
     private void printLoadGame(String json) {
+        //deserialize json into the game board and print the board
     }
 
     private void printNotification(String json) {
+        Notification notification = new Gson().fromJson(json, Notification.class);
+        String message = notification.getMessage();
+        System.out.print("  \uD83D\uDD79 [GAME] NOTIFICATION:" + message + "\n");
     }
 
     private void printError(String json) {
+        Error error = new Gson().fromJson(json, Error.class);
+        String message = error.getMessage();
+        System.out.print("  \uD83D\uDD79 [GAME] ERROR:" + message + "\n");
     }
 }
