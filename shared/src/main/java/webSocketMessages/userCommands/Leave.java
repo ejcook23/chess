@@ -1,13 +1,10 @@
 package webSocketMessages.userCommands;
 
+import static webSocketMessages.userCommands.UserGameCommand.CommandType.LEAVE;
+
 public class Leave extends UserGameCommand{
 
     Integer gameID;
-    CommandType command = CommandType.LEAVE;
-
-    public CommandType getCommand() {
-        return command;
-    }
 
     public Integer getGameID() {
         return gameID;
@@ -16,6 +13,7 @@ public class Leave extends UserGameCommand{
     public Leave(String authToken, Integer gameID) {
         super(authToken);
         this.gameID = gameID;
+        commandType = LEAVE;
     }
 }
 
