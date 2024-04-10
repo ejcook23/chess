@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import facade.NotificationHandler;
 import facade.ServerFacade;
 import facade.WebSocketFacade;
@@ -12,6 +14,7 @@ import model.GameData;
 import model.ListGamesResponse;
 import model.UserAndAuthResponse;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.JoinPlayer;
 
 public class Menu implements NotificationHandler {
     ServerFacade facade;
@@ -147,10 +150,20 @@ public class Menu implements NotificationHandler {
                         String gameNum = scanner.nextLine();
                         System.out.print("  \uD83D\uDD79 [GAME] Please choose (by typing) WHITE or BLACK: ");
                         String color = scanner.nextLine();
+                        ChessGame.TeamColor teamColor;
                         int gameID = menu.gameList.get((Integer.parseInt(gameNum)-1)).gameID();
 
+                        if(color.equalsIgnoreCase("BLACK")) {
+                            teamColor = ChessGame.TeamColor.BLACK;
+                        } else if (color.equalsIgnoreCase("WHITE")) {
+                            teamColor = ChessGame.TeamColor.WHITE;
+                        } else {
+                            teamColor = null;
+                        }
                         ServerFacade.joinGame(menu.authToken,color.toUpperCase(),gameID);
-                        menu.wsfacade.send()
+                        JoinPlayer joinPlayer = new JoinPlayer(menu.authToken, gameID, teamColor);
+                        menu.wsfacade.send(new Gson().toJson(joinPlayer));
+                        
 
                         System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
                         ChessBoard.run();
