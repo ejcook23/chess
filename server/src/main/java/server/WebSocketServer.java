@@ -1,9 +1,12 @@
 package server;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
+import dataAccess.SQLAuthAccess;
 import dataAccess.SQLGameAccess;
+import dataAccess.SQLUserAccess;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
@@ -16,6 +19,7 @@ import webSocketMessages.userCommands.*;
 import server.websocket.Connection;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static webSocketMessages.serverMessages.ServerMessage.ServerMessageType.*;
 import static webSocketMessages.userCommands.UserGameCommand.CommandType.*;
@@ -68,23 +72,39 @@ public class WebSocketServer {
     }
 
     private void join(Connection conn, String msg) throws Exception {
+        // NEED TO DO SOME CHECKS FIRST
+        SQLGameAccess SQLGameAccess = new SQLGameAccess();
+        SQLAuthAccess SQLAuthAccess = new SQLAuthAccess();
         JoinPlayer joinPlayer = new Gson().fromJson(msg, JoinPlayer.class);
         // serialize into join player class, you have the gameID
         Integer gameID = joinPlayer.getGameID();
 
-        // GET GAME DATA FROM DB USING GAMEID
-        SQLGameAccess SQLGameAccess = new SQLGameAccess();
-        GameData gameData = SQLGameAccess.getGameData(gameID);
-        // CREATE LOAD GAME MESSAGE TO SEND BACK
-        LoadGame loadGame = new LoadGame(LOAD_GAME, gameData);
-        String json = new Gson().toJson(loadGame);
 
-        System.out.println("Sending message to client...");
-        //SEND MESSAGE BACK TO CLIENT
-        Notification message = new Notification(NOTIFICATION, "User Joined the game");
-        String notifJson = new Gson().toJson(message);
-        connectionManager.broadcast(conn.authString, notifJson);
-        conn.send(json);
+        // GET GAME DATA FROM DB USING GAMEID
+        GameData gameData = SQLGameAccess.getGameData(gameID);
+        String username = SQLAuthAccess.getUserFromToken(joinPlayer.getAuthString());
+
+        if(!SQLGameAccess.gameExistsByID(gameID)) {
+            sendError(conn, "Error: Game does not exist by that ID!");
+        } else if((!Objects.equals(gameData.blackUsername(), username)) && joinPlayer.getPlayerColor() == ChessGame.TeamColor.BLACK) {
+            sendError(conn, "Error: Sorry, black team already taken.");
+        } else if((!Objects.equals(gameData.whiteUsername(), username)) && joinPlayer.getPlayerColor() == ChessGame.TeamColor.WHITE) {
+            sendError(conn, "Error: White team already taken.");
+        } else {
+
+            // CREATE LOAD GAME MESSAGE TO SEND BACK
+            LoadGame loadGame = new LoadGame(LOAD_GAME, gameData);
+            String json = new Gson().toJson(loadGame);
+
+            System.out.println("Sending message to client...");
+            //SEND MESSAGE BACK TO CLIENT
+            Notification message = new Notification(NOTIFICATION, "User Joined the game");
+            String notifJson = new Gson().toJson(message);
+            connectionManager.broadcast(conn.authString, notifJson);
+            conn.send(json);
+        }
+
+
 
 
     }
