@@ -150,6 +150,7 @@ public class Menu implements NotificationHandler {
                         int gameID = menu.gameList.get((Integer.parseInt(gameNum)-1)).gameID();
 
                         ServerFacade.joinGame(menu.authToken,color.toUpperCase(),gameID);
+                        menu.wsfacade.send()
 
                         System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
                         ChessBoard.run();

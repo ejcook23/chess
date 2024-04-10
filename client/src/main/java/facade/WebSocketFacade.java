@@ -15,6 +15,7 @@ public class WebSocketFacade {
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler) throws Exception {
         try {
+            System.out.print("WebSocketFacade.");
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/connect");
             this.notificationHandler = notificationHandler;
@@ -26,6 +27,7 @@ public class WebSocketFacade {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
+                    System.out.print("Client received message.");
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
                     notificationHandler.notify(notification);
                 }
@@ -36,6 +38,7 @@ public class WebSocketFacade {
     }
 
     public void send(String msg) throws Exception {
+        System.out.print("Client Sending...");
         this.session.getBasicRemote().sendText(msg);
     }
 
