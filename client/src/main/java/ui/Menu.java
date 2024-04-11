@@ -282,7 +282,7 @@ public class Menu implements NotificationHandler {
                             System.out.print(prefix + "  help" + ES.SET_TEXT_COLOR_WHITE + " - to see possible command options\n");
 
                         } else if (input.equalsIgnoreCase("move")) {
-                            if (menu.brickedGames.) {
+                            if (menu.brickedGames.contains(menu.getCurrGameID())) {
                                 System.out.print("  \uD83D\uDD79 [GAME] Sorry, this game is over.");
 
                             } else {
