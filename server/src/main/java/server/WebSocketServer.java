@@ -71,7 +71,7 @@ public class WebSocketServer {
         } else {
             if( (Objects.equals(gameData.blackUsername(), username)) || (Objects.equals(gameData.whiteUsername(), username)) ) {
 
-                sqlGameAccess.updateGameID(gameID,0);
+                //sqlGameAccess.updateGameID(gameID,0);
 
                 System.out.println("\n (websocket resign) Sending message to multiple clients...");
                 //SEND MESSAGE BACK TO CLIENT
