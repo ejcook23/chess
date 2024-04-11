@@ -105,7 +105,7 @@ public class WebSocketServer {
             if(Objects.equals(gameData.blackUsername(), username)) {
                 sqlGameAccess.setBlackUser(gameID,null);
             } else if(Objects.equals(gameData.whiteUsername(), username)) {
-                sqlGameAccess.setBlackUser(gameID,null);
+                sqlGameAccess.setWhiteUser(gameID,null);
             }
 
             System.out.println("(websocket leave) Sending message to clients...");

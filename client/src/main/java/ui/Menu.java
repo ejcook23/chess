@@ -15,8 +15,7 @@ import model.ListGamesResponse;
 import model.UserAndAuthResponse;
 import webSocketMessages.serverMessages.*;
 import webSocketMessages.serverMessages.Error;
-import webSocketMessages.userCommands.JoinObserver;
-import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.*;
 
 public class Menu implements NotificationHandler {
     ServerFacade facade;
@@ -27,6 +26,7 @@ public class Menu implements NotificationHandler {
     ui.ChessBoard chessboard = new ChessBoard();
     chess.ChessBoard currBoard;
     Boolean isWhite = true;
+    Boolean isObserver = false;
     Integer currGameID = 0;
 
     public void setIsWhite(Boolean white) {
@@ -178,21 +178,33 @@ public class Menu implements NotificationHandler {
 
                         if(color.equalsIgnoreCase("BLACK")) {
                             teamColor = ChessGame.TeamColor.BLACK;
+                            menu.isObserver = false;
                             menu.setIsWhite(false);
                         } else if (color.equalsIgnoreCase("WHITE")) {
                             teamColor = ChessGame.TeamColor.WHITE;
+                            menu.isObserver = false;
                             menu.setIsWhite(true);
                         } else {
                             teamColor = null;
+                            menu.isObserver = true;
                             menu.setIsWhite(true);
                         }
-                        ServerFacade.joinGame(menu.authToken,color.toUpperCase(),gameID);
-                        JoinPlayer joinPlayer = new JoinPlayer(menu.authToken, gameID, teamColor);
-                        menu.wsfacade.send(new Gson().toJson(joinPlayer));
-                        inGame = true;
 
-                        System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
-                        System.out.print("  \uD83D\uDD79 [GAME] Leaving current game.\n");
+                        if(menu.isObserver) {
+                            JoinObserver joinObserver = new JoinObserver(menu.authToken, gameID);
+                            menu.wsfacade.send(new Gson().toJson(joinObserver));
+                            inGame = true;
+
+                            System.out.print("  \uD83D\uDD79 [GAME] Game joined as an observer.\n");
+                        } else {
+                            ServerFacade.joinGame(menu.authToken,color.toUpperCase(),gameID);
+                            JoinPlayer joinPlayer = new JoinPlayer(menu.authToken, gameID, teamColor);
+                            menu.wsfacade.send(new Gson().toJson(joinPlayer));
+                            inGame = true;
+
+                            System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
+                        }
+
 
 
                     } else if (input.equalsIgnoreCase("observe")) {
@@ -231,7 +243,9 @@ public class Menu implements NotificationHandler {
 
                         if (input.equalsIgnoreCase("leave")) {
                             System.out.print("  \uD83D\uDD79 [GAME] Leaving current game.\n");
-                            // SEND A WEBSOCKET MESSAGE TO LEAVE GAME
+
+                            Leave leavePlayer = new Leave(menu.authToken, menu.currGameID);
+                            menu.wsfacade.send(new Gson().toJson(leavePlayer));
                             inGame = false;
                             break;
 
