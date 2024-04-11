@@ -198,7 +198,7 @@ public class ChessPiece {
 
             if (board.getPiece(potPos) == null && colDir == 0) {
                 //checks to see if it is in the promotion lane for its color, then adds the potential promotions
-                if(r == 8 && this.pieceColor == ChessGame.TeamColor.WHITE || r == 1 && this.pieceColor == ChessGame.TeamColor.BLACK) {
+                if(inPromotionLane(r)) {
                     PieceType[] promoPieces = {PieceType.ROOK, PieceType.QUEEN, PieceType.BISHOP, PieceType.KNIGHT};
                     for (PieceType promoPiece : promoPieces) {
                         ChessMove potMove = new ChessMove(myPosition, potPos, promoPiece);
@@ -217,7 +217,7 @@ public class ChessPiece {
             else {
                 if((board.getPiece(potPos) != null && board.getPiece(potPos).pieceColor != this.pieceColor) && colDir != 0) {
                     // checks to see if in promotion lane, then adds potential promotions
-                    if(r == 8 && this.pieceColor == ChessGame.TeamColor.WHITE || r == 1 && this.pieceColor == ChessGame.TeamColor.BLACK) {
+                    if(inPromotionLane(r)) {
                         PieceType[] promoPieces = {PieceType.ROOK, PieceType.QUEEN, PieceType.BISHOP, PieceType.KNIGHT};
                         for (PieceType promoPiece : promoPieces) {
                             ChessMove potMove = new ChessMove(myPosition, potPos, promoPiece);
@@ -236,6 +236,10 @@ public class ChessPiece {
 
             }
         }
+    }
+
+    private boolean inPromotionLane(int r) {
+        return r == 8 && this.pieceColor == ChessGame.TeamColor.WHITE || r == 1 && this.pieceColor == ChessGame.TeamColor.BLACK;
     }
 
     private void calcKnightMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
