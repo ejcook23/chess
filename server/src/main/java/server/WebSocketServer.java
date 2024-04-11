@@ -35,7 +35,7 @@ public class WebSocketServer {
 
 
         assert command != null;
-        Connection conn = connectionManager.getConnection(command.getAuthString(), session);
+        Connection conn = connectionManager.createConnection(command.getAuthString(), session);
         if (conn != null) {
             switch (command.getCommandType()) {
                 case JOIN_PLAYER -> join(conn, msg);
@@ -113,6 +113,7 @@ public class WebSocketServer {
             Notification message = new Notification(NOTIFICATION, username + " has left the game.");
             String notifJson = new Gson().toJson(message);
             connectionManager.broadcast(conn.authString, notifJson);
+            connectionManager.remove(conn.authString);
         }
 
     }
@@ -149,6 +150,13 @@ public class WebSocketServer {
                     LoadGame message = new LoadGame(LOAD_GAME, updatedGame);
                     String loadGameJson = new Gson().toJson(message);
                     connectionManager.broadcast(null, loadGameJson);
+
+                    // BROADCAST MADE A MOVE
+                    Notification notif = new Notification(NOTIFICATION, username + " made a move.");
+                    String notifJson = new Gson().toJson(notif);
+                    connectionManager.broadcast(conn.authString, notifJson);
+
+
 
                 } catch (InvalidMoveException e) {
                     sendError(conn, "Error: Invalid move! | " + e.getMessage());
