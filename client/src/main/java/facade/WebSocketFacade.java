@@ -8,7 +8,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import javax.websocket.*;
 
-public class WebSocketFacade {
+public class WebSocketFacade extends Endpoint {
 
     private NotificationHandler notificationHandler;
     private Session session;
@@ -26,7 +26,7 @@ public class WebSocketFacade {
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
-                    System.out.print("Client received message.");
+                    //System.out.print("Client received message.");
                     try {
                         notificationHandler.onMessage(message);
                     } catch (Exception e) {
@@ -40,9 +40,13 @@ public class WebSocketFacade {
     }
 
     public void send(String msg) throws Exception {
-        System.out.print("Client Sending...");
+        // System.out.print("Client Sending...");
         this.session.getBasicRemote().sendText(msg);
     }
 
 
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
+
+    }
 }
