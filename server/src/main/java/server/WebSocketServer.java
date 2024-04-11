@@ -24,9 +24,9 @@ import static webSocketMessages.serverMessages.ServerMessage.ServerMessageType.*
 public class WebSocketServer {
 
     ConnectionManager connectionManager = new ConnectionManager();
-    SqlGameAccess SQLGameAccess = new SqlGameAccess();
-    SqlAuthAccess SQLAuthAccess = new SqlAuthAccess();
-    SqlUserAccess SQLUserAccess = new SqlUserAccess();
+    SqlGameAccess sqlGameAccess = new SqlGameAccess();
+    SqlAuthAccess sqlAuthAccess = new SqlAuthAccess();
+    SqlUserAccess sqlUserAccess = new SqlUserAccess();
 
 
     @OnWebSocketMessage
@@ -63,15 +63,15 @@ public class WebSocketServer {
         // serialize into join player class, you have the gameID
         Integer gameID = resignPlayer.getGameID();
 
-        GameData gameData = SQLGameAccess.getGameData(gameID);
-        String username = SQLAuthAccess.getUserFromToken(resignPlayer.getAuthString());
+        GameData gameData = sqlGameAccess.getGameData(gameID);
+        String username = sqlAuthAccess.getUserFromToken(resignPlayer.getAuthString());
 
         if(gameData == null) {
             sendError(conn, "Error: The game is already over or the gameID is invalid.");
         } else {
             if( (Objects.equals(gameData.blackUsername(), username)) || (Objects.equals(gameData.whiteUsername(), username)) ) {
 
-                SQLGameAccess.updateGameID(gameID,0);
+                sqlGameAccess.updateGameID(gameID,0);
 
                 System.out.println("\n (websocket resign) Sending message to multiple clients...");
                 //SEND MESSAGE BACK TO CLIENT
@@ -94,18 +94,18 @@ public class WebSocketServer {
         // serialize into join player class, you have the gameID
         Integer gameID = leavePlayer.getGameID();
 
-        GameData gameData = SQLGameAccess.getGameData(gameID);
-        String username = SQLAuthAccess.getUserFromToken(leavePlayer.getAuthString());
+        GameData gameData = sqlGameAccess.getGameData(gameID);
+        String username = sqlAuthAccess.getUserFromToken(leavePlayer.getAuthString());
 
-        if(!SQLGameAccess.gameExistsByID(gameID)) {
+        if(!sqlGameAccess.gameExistsByID(gameID)) {
             sendError(conn, "Error: Game does not exist by that ID!");
         } else {
 
             // remove from DB
             if(Objects.equals(gameData.blackUsername(), username)) {
-                SQLGameAccess.setBlackUser(gameID,null);
+                sqlGameAccess.setBlackUser(gameID,null);
             } else if(Objects.equals(gameData.whiteUsername(), username)) {
-                SQLGameAccess.setBlackUser(gameID,null);
+                sqlGameAccess.setBlackUser(gameID,null);
             }
 
             System.out.println("(websocket leave) Sending message to clients...");
@@ -121,8 +121,8 @@ public class WebSocketServer {
         MakeMove makeMove = new Gson().fromJson(msg, MakeMove.class);
         Integer gameID = makeMove.getGameID();
         ChessMove move = makeMove.getMove();
-        GameData gameData = SQLGameAccess.getGameData(gameID);
-        String username = SQLAuthAccess.getUserFromToken(makeMove.getAuthString());
+        GameData gameData = sqlGameAccess.getGameData(gameID);
+        String username = sqlAuthAccess.getUserFromToken(makeMove.getAuthString());
 
         if(gameData == null) {
             sendError(conn, "Error: Game does not exist by that ID, or game is over.");
@@ -139,9 +139,9 @@ public class WebSocketServer {
                 try {
                     gameData.game().makeMove(move);
                     String chessGameJson = new Gson().toJson(gameData.game());
-                    SQLGameAccess.updateGame(gameID, chessGameJson);
+                    sqlGameAccess.updateGame(gameID, chessGameJson);
 
-                    GameData updatedGame = SQLGameAccess.getGameData(gameID);
+                    GameData updatedGame = sqlGameAccess.getGameData(gameID);
 
                     // BROADCAST LOAD GAME
 
@@ -172,10 +172,10 @@ public class WebSocketServer {
         Integer gameID = joinObserver.getGameID();
 
         // GET GAME DATA FROM DB USING GAMEID
-        GameData gameData = SQLGameAccess.getGameData(gameID);
-        String username = SQLAuthAccess.getUserFromToken(joinObserver.getAuthString());
+        GameData gameData = sqlGameAccess.getGameData(gameID);
+        String username = sqlAuthAccess.getUserFromToken(joinObserver.getAuthString());
 
-        if(!SQLGameAccess.gameExistsByID(gameID)) {
+        if(!sqlGameAccess.gameExistsByID(gameID)) {
             sendError(conn, "Error: Game does not exist by that ID!");
         } else if (username == null) {
             sendError(conn, "Error: Bad AuthToken!");
@@ -202,10 +202,10 @@ public class WebSocketServer {
         Integer gameID = joinPlayer.getGameID();
 
         // GET GAME DATA FROM DB USING GAMEID
-        GameData gameData = SQLGameAccess.getGameData(gameID);
-        String username = SQLAuthAccess.getUserFromToken(joinPlayer.getAuthString());
+        GameData gameData = sqlGameAccess.getGameData(gameID);
+        String username = sqlAuthAccess.getUserFromToken(joinPlayer.getAuthString());
 
-        if(!SQLGameAccess.gameExistsByID(gameID)) {
+        if(!sqlGameAccess.gameExistsByID(gameID)) {
             sendError(conn, "Error: Game does not exist by that ID!");
         } else if((!Objects.equals(gameData.blackUsername(), username)) && joinPlayer.getPlayerColor() == ChessGame.TeamColor.BLACK) {
             sendError(conn, "Error: Sorry, black team already taken.");
