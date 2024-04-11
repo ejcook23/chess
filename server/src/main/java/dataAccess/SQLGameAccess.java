@@ -230,6 +230,19 @@ public class SQLGameAccess implements GameAccess{
         }
     }
 
+    public void updateGameID(int currGameID, int newNum) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("UPDATE GameData SET gameID=? WHERE gameID=?")) {
+                preparedStatement.setString(1, Integer.toString(newNum));
+                preparedStatement.setString(2, Integer.toString(currGameID));
+                preparedStatement.executeUpdate();
+            }
+        } catch(Exception e) {
+            System.out.println("SQL Access Error: " + e.getMessage());
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     @Override
     public void setWhiteUser(int gameID, String username) throws DataAccessException {
         try(Connection conn = DatabaseManager.getConnection()) {

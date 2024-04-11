@@ -64,7 +64,35 @@ public class WebSocketServer {
     }
 
 
-    private void resign(Connection conn, String msg) {
+    private void resign(Connection conn, String msg) throws Exception {
+        Resign resignPlayer = new Gson().fromJson(msg, Resign.class);
+        // serialize into join player class, you have the gameID
+        Integer gameID = resignPlayer.getGameID();
+
+        GameData gameData = SQLGameAccess.getGameData(gameID);
+        String username = SQLAuthAccess.getUserFromToken(resignPlayer.getAuthString());
+
+        if(gameData == null) {
+            sendError(conn, "Error: The game is already over or the gameID is invalid.");
+        } else {
+            if( (Objects.equals(gameData.blackUsername(), username)) || (Objects.equals(gameData.whiteUsername(), username)) ) {
+
+                SQLGameAccess.updateGameID(gameID,0);
+
+                System.out.println("\n (websocket resign) Sending message to multiple clients...");
+                //SEND MESSAGE BACK TO CLIENT
+                Notification message = new Notification(NOTIFICATION, username + " resigned from the game.");
+                String notifJson = new Gson().toJson(message);
+                connectionManager.broadcast(null, notifJson);
+
+
+            } else {
+                sendError(conn, "Error: You are not a player and cannot resign.");
+            }
+        }
+
+
+
     }
 
     private void leave(Connection conn, String msg) throws Exception {
@@ -86,7 +114,7 @@ public class WebSocketServer {
                 SQLGameAccess.setBlackUser(gameID,null);
             }
 
-            System.out.println("Sending message to client...");
+            System.out.println("(websocket leave) Sending message to clients...");
             //SEND MESSAGE BACK TO CLIENT
             Notification message = new Notification(NOTIFICATION, username + " has left the game.");
             String notifJson = new Gson().toJson(message);
