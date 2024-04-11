@@ -196,7 +196,7 @@ public class ChessPiece {
 
             ChessPosition potPos = new ChessPosition(r,c);
 
-            if (board.getPiece(potPos) == null && colDir == 0) {
+            if (promotionCheck(board, colDir, potPos)) {
                 //checks to see if it is in the promotion lane for its color, then adds the potential promotions
                 if(inPromotionLane(r)) {
                     PieceType[] promoPieces = {PieceType.ROOK, PieceType.QUEEN, PieceType.BISHOP, PieceType.KNIGHT};
@@ -236,6 +236,10 @@ public class ChessPiece {
 
             }
         }
+    }
+
+    private static boolean promotionCheck(ChessBoard board, int colDir, ChessPosition potPos) {
+        return board.getPiece(potPos) == null && colDir == 0;
     }
 
     private boolean inPromotionLane(int r) {
