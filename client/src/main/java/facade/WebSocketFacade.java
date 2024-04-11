@@ -27,7 +27,11 @@ public class WebSocketFacade {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
                     System.out.print("Client received message.");
-                    notificationHandler.onMessage(message);
+                    try {
+                        notificationHandler.onMessage(message);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

@@ -23,6 +23,8 @@ public class Menu implements NotificationHandler {
     String user;
     String authToken;
     ArrayList<GameData> gameList = new ArrayList<>();
+    ui.ChessBoard chessboard = new ChessBoard();
+
 
     public Menu() throws Exception {
         this.facade = new ServerFacade(8080);
@@ -32,7 +34,10 @@ public class Menu implements NotificationHandler {
     public static void main(String[] args) throws Exception {
         Menu menu = new Menu();
 
+
         boolean loggedIn = false;
+        boolean inGame = false;
+        int currGameID = 0;
         String prefix = ES.SET_TEXT_COLOR_GREEN;
         Scanner scanner = new Scanner(System.in);
         System.out.print(ES.SET_TEXT_COLOR_WHITE);
@@ -167,7 +172,9 @@ public class Menu implements NotificationHandler {
 
 
                         System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
-                        ChessBoard.run();
+                        inGame = true;
+                        currGameID = gameID;
+                        break;
 
 
                     } else if (input.equalsIgnoreCase("observe")) {
@@ -177,7 +184,9 @@ public class Menu implements NotificationHandler {
 
                         ServerFacade.joinGame(menu.authToken,null,gameID);
                         System.out.print("  \uD83D\uDD79 [GAME] Game joined as an observer.\n");
-                        ChessBoard.run();
+                        inGame = true;
+                        currGameID = gameID;
+                        break;
 
                     } else {
                         System.out.print("  \uD83D\uDD79 [GAME] Sorry, I don't know that command. Try typing \"help\" into the console for a list of available commands.\n");
@@ -191,12 +200,48 @@ public class Menu implements NotificationHandler {
                     System.out.print("  \uD83D\uDD79 [GAME] Sorry, " + e + "\n");
                 }
 
+                while(inGame) {
+
+                    try {
+                        System.out.print("  \uD83D\uDD79 [GAME] Welcome to the game.\n");
+                        System.out.print("\uD83D\uDFE9 ["+ menu.user + "] >> ");
+                        String input = scanner.nextLine();
+
+                        if (input.equalsIgnoreCase("leave")) {
+                            System.out.print("  \uD83D\uDD79 [GAME] Leaving current game.\n");
+                            // SEND A WEBSOCKET MESSAGE TO LEAVE GAME
+                            inGame = false;
+                            break;
+
+                        } else if (input.equalsIgnoreCase("help")) {
+                            System.out.print(prefix + "  redraw" + ES.SET_TEXT_COLOR_WHITE + " - to redraw the chessboard\n");
+                            System.out.print(prefix + "  leave" + ES.SET_TEXT_COLOR_WHITE + " - to leave the current game\n");
+                            System.out.print(prefix + "  move" + ES.SET_TEXT_COLOR_WHITE + " - to make a move\n");
+                            System.out.print(prefix + "  resign" + ES.SET_TEXT_COLOR_WHITE + " - to resign the current game\n");
+                            System.out.print(prefix + "  highlight" + ES.SET_TEXT_COLOR_WHITE + " - to highlight legal moves\n");
+                            System.out.print(prefix + "  help" + ES.SET_TEXT_COLOR_WHITE + " - to see possible command options\n");
+
+                        } else if (input.equalsIgnoreCase("join")) {
+                            System.out.print("  \uD83D\uDD79 [GAME] Enter your game name here: ");
+                            String gameName = scanner.nextLine();
+                            CreateGameResponse response =  ServerFacade.createGame(menu.authToken,gameName);
+                            System.out.print("  \uD83D\uDD79 [GAME] Great! Game has been created with name " + prefix +  gameName + ES.SET_TEXT_COLOR_WHITE + " and ID " + prefix +  response.gameID() + ES.SET_TEXT_COLOR_WHITE + "!\n");
+
+                        }
+
+
+                    } catch (Exception e) {
+                        System.out.print("  \uD83D\uDD79 [GAME] Sorry, " + e + "\n");
+                    }
+
+                }
+
             }
         }
     }
 
     @Override
-    public void onMessage(String json) {
+    public void onMessage(String json) throws Exception {
         ServerMessage notification = new Gson().fromJson(json, ServerMessage.class);
 
         switch (notification.getServerMessageType()) {
@@ -206,8 +251,12 @@ public class Menu implements NotificationHandler {
         }
     }
 
-    private void printLoadGame(String json) {
+    private void printLoadGame(String json) throws Exception {
         //deserialize json into the game board and print the board
+        LoadGame loadGame = new Gson().fromJson(json, LoadGame.class);
+        chess.ChessBoard board = loadGame.getGame().game().getBoard();
+        chessboard.run(board);
+
     }
 
     private void printNotification(String json) {

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import ui.*;
+
 import chess.*;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -14,22 +14,14 @@ import static ui.ES.*;
 
 public class ChessBoard {
 
-    private static final int BOARD_SIZE_IN_SQUARES = 8;
-    private static final int SQUARE_SIZE_IN_CHARS = 3;
-    private static final int LINE_WIDTH_IN_CHARS = 1;
     private static final String EMPTY = "   ";
-    private static final String X = " X ";
-    private static final String O = " O ";
     static ArrayList<String> boardArray = new ArrayList<>();
     static ArrayList<String> colorArray = new ArrayList<>();
+    chess.ChessBoard currBoard;
 
-    public static void main(String[] args) throws Exception {
-        run();
-    }
 
-    public static void run() throws Exception {
-        chess.ChessBoard board = new chess.ChessBoard();
-        board.resetBoard();
+    public void run(chess.ChessBoard board) throws Exception {
+        this.currBoard = board;
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
