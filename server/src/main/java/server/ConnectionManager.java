@@ -19,9 +19,10 @@ public class ConnectionManager {
         connections.remove(authString);
     }
 
-    public void broadcast(String excludeAuthString, String notification) throws IOException {
+    public void broadcast(String excludeAuthString, String notification ) throws IOException {
         var removeList = new ArrayList<server.Connection>();
         for (var c : connections.values()) {
+
             if (c.session.isOpen()) {
                 if (!c.authString.equals(excludeAuthString)) {
                     c.send(notification);

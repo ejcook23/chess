@@ -34,17 +34,6 @@ public class ChessBoard {
 
         out.print("\n");
 
-        //out.print(boardArray.toString());
-        //out.print(colorArray.toString());
-
-        //out.print("\n");
-
-        //printSquare(out, "white","black",BLACK_KING);
-
-
-
-
-
 
     }
 

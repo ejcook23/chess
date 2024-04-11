@@ -5,13 +5,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 public class SQLUserAccessTests {
 
-    UserAccess userDAO = new SQLUserAccess();
-    AuthAccess authDAO = new SQLAuthAccess();
+    UserAccess userDAO = new SqlUserAccess();
+    AuthAccess authDAO = new SqlAuthAccess();
 
     UserService service = new UserService(userDAO, authDAO);
 

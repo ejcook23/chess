@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class SQLGameAccess implements GameAccess{
+public class SqlGameAccess implements GameAccess{
     @Override
     public void createGame(String gameName) throws DataAccessException {
         ChessGame game = new ChessGame();

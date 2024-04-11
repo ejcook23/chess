@@ -26,9 +26,9 @@ public class Server {
 
     public Server() {
         // INIT DAOS
-        UserAccess userDAO = new SQLUserAccess();
-        AuthAccess authDAO = new SQLAuthAccess();
-        GameAccess gameDAO = new SQLGameAccess();
+        UserAccess userDAO = new SqlUserAccess();
+        AuthAccess authDAO = new SqlAuthAccess();
+        GameAccess gameDAO = new SqlGameAccess();
         this.webSocketServer = new WebSocketServer();
         // INIT SERVICES
         dbService = new DBService(userDAO, authDAO, gameDAO);

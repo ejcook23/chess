@@ -4,9 +4,9 @@ package dataAccess;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class SQLUserAccess implements UserAccess {
+public class SqlUserAccess implements UserAccess {
 
-    public SQLUserAccess() {
+    public SqlUserAccess() {
         try {
             DatabaseManager.createDatabase();
         } catch (DataAccessException e) {

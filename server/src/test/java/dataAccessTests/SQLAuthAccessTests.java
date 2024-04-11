@@ -3,13 +3,12 @@ package dataAccessTests;
 import dataAccess.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import service.UserService;
 
 import java.sql.SQLException;
 
 public class SQLAuthAccessTests {
-    UserAccess userDAO = new SQLUserAccess();
-    AuthAccess authDAO = new SQLAuthAccess();
+    UserAccess userDAO = new SqlUserAccess();
+    AuthAccess authDAO = new SqlAuthAccess();
 
     @Test
     public void clearTokensPos() throws DataAccessException, SQLException {

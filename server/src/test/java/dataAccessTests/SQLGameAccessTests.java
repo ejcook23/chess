@@ -2,14 +2,14 @@ package dataAccessTests;
 
 import dataAccess.DataAccessException;
 import dataAccess.GameAccess;
-import dataAccess.SQLGameAccess;
+import dataAccess.SqlGameAccess;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
 public class SQLGameAccessTests {
-    GameAccess gameDAO = new SQLGameAccess();
+    GameAccess gameDAO = new SqlGameAccess();
 
     @Test
     public void createGamePos() throws DataAccessException, SQLException {

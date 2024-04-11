@@ -1,10 +1,9 @@
 package dataAccess;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.UUID;
 
-public class SQLAuthAccess implements AuthAccess{
+public class SqlAuthAccess implements AuthAccess{
     @Override
     public void clearTokens() throws DataAccessException{
         try(Connection conn = DatabaseManager.getConnection()) {

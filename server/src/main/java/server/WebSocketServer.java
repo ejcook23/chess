@@ -1,38 +1,32 @@
 package server;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
-import dataAccess.SQLAuthAccess;
-import dataAccess.SQLGameAccess;
-import dataAccess.SQLUserAccess;
+import dataAccess.SqlAuthAccess;
+import dataAccess.SqlGameAccess;
+import dataAccess.SqlUserAccess;
 import model.GameData;
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import webSocketMessages.serverMessages.*;
 import webSocketMessages.serverMessages.Error;
-import webSocketMessages.serverMessages.ServerMessage.ServerMessageType;
 import webSocketMessages.userCommands.*;
-import server.Connection;
 
 import java.io.IOException;
 import java.util.Objects;
 
 import static webSocketMessages.serverMessages.ServerMessage.ServerMessageType.*;
-import static webSocketMessages.userCommands.UserGameCommand.CommandType.*;
 
 @WebSocket
 public class WebSocketServer {
 
     ConnectionManager connectionManager = new ConnectionManager();
-    SQLGameAccess SQLGameAccess = new SQLGameAccess();
-    SQLAuthAccess SQLAuthAccess = new SQLAuthAccess();
-    SQLUserAccess SQLUserAccess = new SQLUserAccess();
+    SqlGameAccess SQLGameAccess = new SqlGameAccess();
+    SqlAuthAccess SQLAuthAccess = new SqlAuthAccess();
+    SqlUserAccess SQLUserAccess = new SqlUserAccess();
 
 
     @OnWebSocketMessage

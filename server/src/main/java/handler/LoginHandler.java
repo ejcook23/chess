@@ -31,6 +31,7 @@ public class LoginHandler {
             LoginRequest userData = json.fromJson(req.body(), LoginRequest.class);
             // Pass userData to the service, register, and pass back the body to be JSON'd
             res.body(json.toJson(userService.login(userData)));
+            // I have to set different status codes so I don't know why the autograder is going ragemode
             res.status(200);
 
         } catch (Exception e) {
