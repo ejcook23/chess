@@ -206,7 +206,6 @@ public class Menu implements NotificationHandler {
                         }
 
 
-
                     } else if (input.equalsIgnoreCase("observe")) {
                         System.out.print("  \uD83D\uDD79 [GAME] Please enter the game number: ");
                         String gameNum = scanner.nextLine();
