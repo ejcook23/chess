@@ -127,22 +127,47 @@ public class WebSocketServer {
         MakeMove makeMove = new Gson().fromJson(msg, MakeMove.class);
         Integer gameID = makeMove.getGameID();
         ChessMove move = makeMove.getMove();
-        GameData game = SQLGameAccess.getGameData(gameID);
+        GameData gameData = SQLGameAccess.getGameData(gameID);
         String username = SQLAuthAccess.getUserFromToken(makeMove.getAuthString());
 
-        // make the chess move
-        game.game().makeMove(move);
-        String chessGameJson = new Gson().toJson(game.game());
-        SQLGameAccess.updateGame(gameID, chessGameJson);
+        if(gameData == null) {
+            sendError(conn, "Error: Game does not exist by that ID, or game is over.");
+        } else {
+            // CHECK IF IT IS THE USERS TURN
+            if ( !(Objects.equals(gameData.blackUsername(), username)) && !(Objects.equals(gameData.whiteUsername(), username)) ) {
+                sendError(conn, "Error: You are an observer and cannot make moves.");
 
-        GameData updatedGame = SQLGameAccess.getGameData(gameID);
+            } else if ( (Objects.equals(gameData.blackUsername(), username) && (gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK)) || (Objects.equals(gameData.whiteUsername(), username) && (gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE)) ) {
+                sendError(conn, "Error: It is not your turn!");
 
-        // BROADCAST LOAD GAME
+            } else {
 
-        // BROADCAST LOAD GAME
-        LoadGame message = new LoadGame(LOAD_GAME, updatedGame);
-        String loadGameJson = new Gson().toJson(message);
-        connectionManager.broadcast(null, loadGameJson);
+                try {
+                    gameData.game().makeMove(move);
+                    String chessGameJson = new Gson().toJson(gameData.game());
+                    SQLGameAccess.updateGame(gameID, chessGameJson);
+
+                    GameData updatedGame = SQLGameAccess.getGameData(gameID);
+
+                    // BROADCAST LOAD GAME
+
+                    // BROADCAST LOAD GAME
+                    LoadGame message = new LoadGame(LOAD_GAME, updatedGame);
+                    String loadGameJson = new Gson().toJson(message);
+                    connectionManager.broadcast(null, loadGameJson);
+
+                } catch (InvalidMoveException e) {
+                    sendError(conn, "Error: Invalid move! | " + e.getMessage());
+                }
+            }
+
+
+
+
+        }
+
+
+
 
 
     }
