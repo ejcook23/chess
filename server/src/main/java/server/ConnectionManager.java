@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<String, server.websocket.Connection> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, server.Connection> connections = new ConcurrentHashMap<>();
 
     public void add(String authString, Session session) {
-        var connection = new server.websocket.Connection(authString, session);
+        var connection = new server.Connection(authString, session);
         connections.put(authString, connection);
     }
 
@@ -20,7 +20,7 @@ public class ConnectionManager {
     }
 
     public void broadcast(String excludeAuthString, String notification) throws IOException {
-        var removeList = new ArrayList<server.websocket.Connection>();
+        var removeList = new ArrayList<server.Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.authString.equals(excludeAuthString)) {
@@ -37,7 +37,7 @@ public class ConnectionManager {
         }
     }
 
-    public server.websocket.Connection getConnection(String authString, Session session) {
+    public server.Connection getConnection(String authString, Session session) {
         if(!connections.contains(authString)) {
             add(authString, session);
         }

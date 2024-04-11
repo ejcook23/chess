@@ -18,7 +18,7 @@ import webSocketMessages.serverMessages.*;
 import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.ServerMessage.ServerMessageType;
 import webSocketMessages.userCommands.*;
-import server.websocket.Connection;
+import server.Connection;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -41,7 +41,7 @@ public class WebSocketServer {
 
 
         assert command != null;
-        var conn = connectionManager.getConnection(command.getAuthString(), session);
+        Connection conn = connectionManager.getConnection(command.getAuthString(), session);
         if (conn != null) {
             switch (command.getCommandType()) {
                 case JOIN_PLAYER -> join(conn, msg);
@@ -67,7 +67,32 @@ public class WebSocketServer {
     private void resign(Connection conn, String msg) {
     }
 
-    private void leave(Connection conn, String msg) {
+    private void leave(Connection conn, String msg) throws Exception {
+        Leave leavePlayer = new Gson().fromJson(msg, Leave.class);
+        // serialize into join player class, you have the gameID
+        Integer gameID = leavePlayer.getGameID();
+
+        GameData gameData = SQLGameAccess.getGameData(gameID);
+        String username = SQLAuthAccess.getUserFromToken(leavePlayer.getAuthString());
+
+        if(!SQLGameAccess.gameExistsByID(gameID)) {
+            sendError(conn, "Error: Game does not exist by that ID!");
+        } else {
+
+            // remove from DB
+            if(Objects.equals(gameData.blackUsername(), username)) {
+                SQLGameAccess.setBlackUser(gameID,null);
+            } else if(Objects.equals(gameData.whiteUsername(), username)) {
+                SQLGameAccess.setBlackUser(gameID,null);
+            }
+
+            System.out.println("Sending message to client...");
+            //SEND MESSAGE BACK TO CLIENT
+            Notification message = new Notification(NOTIFICATION, username + " has left the game.");
+            String notifJson = new Gson().toJson(message);
+            connectionManager.broadcast(conn.authString, notifJson);
+        }
+
     }
 
     private void move(Connection conn, String msg) throws Exception {
@@ -83,15 +108,13 @@ public class WebSocketServer {
         SQLGameAccess.updateGame(gameID, chessGameJson);
 
         GameData updatedGame = SQLGameAccess.getGameData(gameID);
-        String gameDataJson = new Gson().toJson(updatedGame);
 
         // BROADCAST LOAD GAME
-        connectionManager.broadcast(null, gameDataJson);
 
-        // BROADCAST NOTIFICATION
-        Notification message = new Notification(NOTIFICATION, username + " made a move.");
-        String notifJson = new Gson().toJson(message);
-        connectionManager.broadcast(conn.authString, notifJson);
+        // BROADCAST LOAD GAME
+        LoadGame message = new LoadGame(LOAD_GAME, updatedGame);
+        String loadGameJson = new Gson().toJson(message);
+        connectionManager.broadcast(null, loadGameJson);
 
 
     }
@@ -114,14 +137,14 @@ public class WebSocketServer {
             // CREATE LOAD GAME MESSAGE TO SEND BACK
             LoadGame loadGame = new LoadGame(LOAD_GAME, gameData);
             String json = new Gson().toJson(loadGame);
+            conn.send(json);
 
-            System.out.println("Sending message to client...");
+            System.out.println("\n(websocket observe) Sending message to client...");
             //BROADCAST MESSAGE
             Notification message = new Notification(NOTIFICATION, username + " joined the game as an observer.");
             String notifJson = new Gson().toJson(message);
             connectionManager.broadcast(conn.authString, notifJson);
-            // SEND LOAD GAME BACK TO CLIENT
-            conn.send(json);
+
         }
     }
 
@@ -146,13 +169,14 @@ public class WebSocketServer {
             // CREATE LOAD GAME MESSAGE TO SEND BACK
             LoadGame loadGame = new LoadGame(LOAD_GAME, gameData);
             String json = new Gson().toJson(loadGame);
+            conn.send(json);
 
-            System.out.println("Sending message to client...");
+            System.out.println("\n (websocket join) Sending message to client...");
             //SEND MESSAGE BACK TO CLIENT
             Notification message = new Notification(NOTIFICATION, username + " Joined the game as " + joinPlayer.getPlayerColor().toString());
             String notifJson = new Gson().toJson(message);
             connectionManager.broadcast(conn.authString, notifJson);
-            conn.send(json);
+
         }
 
 

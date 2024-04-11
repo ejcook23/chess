@@ -198,7 +198,6 @@ public class Menu implements NotificationHandler {
     @Override
     public void onMessage(String json) {
         ServerMessage notification = new Gson().fromJson(json, ServerMessage.class);
-        ;
 
         switch (notification.getServerMessageType()) {
             case ERROR -> printError(json);

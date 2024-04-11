@@ -10,13 +10,14 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-
-    public ChessGame() {
-
-    }
-
     private ChessBoard chessBoard;
     private TeamColor teamTurn = TeamColor.WHITE;
+
+    public ChessGame() {
+        this.chessBoard = new ChessBoard();
+    }
+
+
     /**
      * @return Which team's turn it is
      */

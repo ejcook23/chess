@@ -12,7 +12,7 @@ public class ChessBoard {
     // chessboard data structure
     public ChessPiece[][] squares = new ChessPiece[8][8];
     public ChessBoard() {
-        
+        this.resetBoard();
     }
 
 
