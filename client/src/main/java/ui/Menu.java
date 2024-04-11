@@ -1,10 +1,11 @@
 package ui;
 
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import facade.NotificationHandler;
 import facade.ServerFacade;
@@ -48,6 +49,16 @@ public class Menu implements NotificationHandler {
 
     public static void main(String[] args) throws Exception {
         Menu menu = new Menu();
+        Map<String, Integer> colMap = new HashMap<>() {{
+            put("a", 8);
+            put("b", 7);
+            put("c", 6);
+            put("d", 5);
+            put("e", 4);
+            put("f", 3);
+            put("g", 2);
+            put("h", 1);
+        }};
 
 
         boolean loggedIn = false;
@@ -255,6 +266,51 @@ public class Menu implements NotificationHandler {
                             System.out.print(prefix + "  resign" + ES.SET_TEXT_COLOR_WHITE + " - to resign the current game\n");
                             System.out.print(prefix + "  highlight" + ES.SET_TEXT_COLOR_WHITE + " - to highlight legal moves\n");
                             System.out.print(prefix + "  help" + ES.SET_TEXT_COLOR_WHITE + " - to see possible command options\n");
+
+                        } else if (input.equalsIgnoreCase("move")) {
+                            System.out.print("  \uD83D\uDD79 [GAME] Enter STARTING position ROW: ");
+                            int startRow = Integer.parseInt(scanner.nextLine());
+                            System.out.print("  \uD83D\uDD79 [GAME] Enter STARTING position COLUMN: ");
+                            String startCol = scanner.nextLine();
+                            System.out.print("  \uD83D\uDD79 [GAME] Enter ENDING position ROW: ");
+                            int endRow = Integer.parseInt(scanner.nextLine());
+                            System.out.print("  \uD83D\uDD79 [GAME] Enter ENDING position COLUMN: ");
+                            String endCol = scanner.nextLine();
+
+                            int startColInt = colMap.get(startCol);
+                            int endColInt = colMap.get(endCol);
+                            ChessPiece.PieceType startPiece = menu.currBoard.getPiece(new ChessPosition(startRow, startColInt)).getPieceType();
+                            ChessPiece.PieceType promoPiece = null;
+
+                            if(((menu.isWhite && endRow == 8) || (!menu.isWhite && endRow == 1)) && startPiece == ChessPiece.PieceType.PAWN) {
+                                System.out.print("  \uD83D\uDD79 [GAME] CONGRATS! Select your promotion piece: (QUEEN, ROOK, KNIGHT, BISHOP)");
+                                String promoPieceString = scanner.nextLine();
+                                promoPieceString = promoPieceString.toUpperCase();
+
+                                promoPiece = switch (promoPieceString) {
+                                    case "QUEEN" -> ChessPiece.PieceType.QUEEN;
+                                    case "ROOK" -> ChessPiece.PieceType.ROOK;
+                                    case "KNIGHT" -> ChessPiece.PieceType.KNIGHT;
+                                    case "BISHOP" -> ChessPiece.PieceType.BISHOP;
+                                    default -> ChessPiece.PieceType.PAWN;
+                                };
+
+
+                            }
+
+
+                            if(!(startRow > 0 && startRow <= 8) || !(endRow > 0 && endRow <= 8) || !colMap.containsKey(startCol) || !colMap.containsKey(endCol) || promoPiece == ChessPiece.PieceType.PAWN) {
+                                System.out.print("  \uD83D\uDD79 [GAME] Sorry, those aren't valid inputs.\n");
+                            } else {
+
+                                ChessPosition startPos = new ChessPosition(startRow,startColInt);
+                                ChessPosition endPos = new ChessPosition(endRow, endColInt);
+
+                                ChessMove move = new ChessMove(startPos, endPos, promoPiece);
+                                MakeMove makeMove = new MakeMove(menu.authToken, menu.currGameID, move);
+                                menu.wsfacade.send(new Gson().toJson(makeMove));
+                            }
+
 
                         } else if (input.equalsIgnoreCase("redraw")) {
                             System.out.print("  \uD83D\uDD79 [GAME] Here's the current game board: \n");

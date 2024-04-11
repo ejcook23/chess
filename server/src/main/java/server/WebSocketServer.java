@@ -132,10 +132,13 @@ public class WebSocketServer {
             if ( !(Objects.equals(gameData.blackUsername(), username)) && !(Objects.equals(gameData.whiteUsername(), username)) ) {
                 sendError(conn, "Error: You are an observer and cannot make moves.");
 
-            } else if ( (Objects.equals(gameData.blackUsername(), username) && (gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK)) || (Objects.equals(gameData.whiteUsername(), username) && (gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE)) ) {
-                sendError(conn, "Error: It is not your turn!");
+            } else if ( (Objects.equals(gameData.blackUsername(), username) && (gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK))  ) {
+                sendError(conn, "Error: It is not your turn, black!");
 
-            } else {
+            } else if ((Objects.equals(gameData.whiteUsername(), username) && (gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE)) ) {
+                sendError(conn, "Error: It is not your turn, white!");
+
+            }else {
 
                 try {
                     gameData.game().makeMove(move);
@@ -143,8 +146,6 @@ public class WebSocketServer {
                     sqlGameAccess.updateGame(gameID, chessGameJson);
 
                     GameData updatedGame = sqlGameAccess.getGameData(gameID);
-
-                    // BROADCAST LOAD GAME
 
                     // BROADCAST LOAD GAME
                     LoadGame message = new LoadGame(LOAD_GAME, updatedGame);
