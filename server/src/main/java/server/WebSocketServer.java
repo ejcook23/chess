@@ -77,7 +77,7 @@ public class WebSocketServer {
                 //SEND MESSAGE BACK TO CLIENT
                 Notification message = new Notification(NOTIFICATION, username + " resigned from the game.");
                 String notifJson = new Gson().toJson(message);
-                connectionManager.broadcast(null, notifJson);
+                connectionManager.broadcast(null, notifJson, gameID);
 
 
             } else {
@@ -112,8 +112,8 @@ public class WebSocketServer {
             //SEND MESSAGE BACK TO CLIENT
             Notification message = new Notification(NOTIFICATION, username + " has left the game.");
             String notifJson = new Gson().toJson(message);
-            connectionManager.broadcast(conn.authString, notifJson);
-            connectionManager.remove(conn.authString);
+            connectionManager.broadcast(conn.authString, notifJson, gameID);
+            connectionManager.remove(conn.authString, gameID);
         }
 
     }
@@ -149,12 +149,12 @@ public class WebSocketServer {
                     // BROADCAST LOAD GAME
                     LoadGame message = new LoadGame(LOAD_GAME, updatedGame);
                     String loadGameJson = new Gson().toJson(message);
-                    connectionManager.broadcast(null, loadGameJson);
+                    connectionManager.broadcast(null, loadGameJson, gameID);
 
                     // BROADCAST MADE A MOVE
                     Notification notif = new Notification(NOTIFICATION, username + " made a move.");
                     String notifJson = new Gson().toJson(notif);
-                    connectionManager.broadcast(conn.authString, notifJson);
+                    connectionManager.broadcast(conn.authString, notifJson, gameID);
 
 
 
@@ -179,6 +179,8 @@ public class WebSocketServer {
         // serialize into join observer class, now we have GameID
         Integer gameID = joinObserver.getGameID();
 
+        connectionManager.add(conn.authString, conn.session, gameID);
+
         // GET GAME DATA FROM DB USING GAMEID
         GameData gameData = sqlGameAccess.getGameData(gameID);
         String username = sqlAuthAccess.getUserFromToken(joinObserver.getAuthString());
@@ -198,7 +200,7 @@ public class WebSocketServer {
             //BROADCAST MESSAGE
             Notification message = new Notification(NOTIFICATION, username + " joined the game as an observer.");
             String notifJson = new Gson().toJson(message);
-            connectionManager.broadcast(conn.authString, notifJson);
+            connectionManager.broadcast(conn.authString, notifJson, gameID);
 
         }
     }
@@ -208,6 +210,8 @@ public class WebSocketServer {
         JoinPlayer joinPlayer = new Gson().fromJson(msg, JoinPlayer.class);
         // serialize into join player class, you have the gameID
         Integer gameID = joinPlayer.getGameID();
+
+        connectionManager.add(conn.authString, conn.session, gameID);
 
         // GET GAME DATA FROM DB USING GAMEID
         GameData gameData = sqlGameAccess.getGameData(gameID);
@@ -230,7 +234,7 @@ public class WebSocketServer {
             //SEND MESSAGE BACK TO CLIENT
             Notification message = new Notification(NOTIFICATION, username + " Joined the game as " + joinPlayer.getPlayerColor().toString());
             String notifJson = new Gson().toJson(message);
-            connectionManager.broadcast(conn.authString, notifJson);
+            connectionManager.broadcast(conn.authString, notifJson, gameID);
 
         }
 
