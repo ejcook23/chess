@@ -15,6 +15,7 @@ import model.ListGamesResponse;
 import model.UserAndAuthResponse;
 import webSocketMessages.serverMessages.*;
 import webSocketMessages.serverMessages.Error;
+import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
 
 public class Menu implements NotificationHandler {
@@ -24,11 +25,25 @@ public class Menu implements NotificationHandler {
     String authToken;
     ArrayList<GameData> gameList = new ArrayList<>();
     ui.ChessBoard chessboard = new ChessBoard();
+    chess.ChessBoard currBoard;
+    Boolean isWhite = true;
+    Integer currGameID = 0;
 
+    public void setIsWhite(Boolean white) {
+        isWhite = white;
+    }
 
     public Menu() throws Exception {
         this.facade = new ServerFacade(8080);
         this.wsfacade = new WebSocketFacade("http://localhost:8080",this);
+    }
+
+    public void setCurrGameID(Integer currGameID) {
+        this.currGameID = currGameID;
+    }
+
+    public Integer getCurrGameID() {
+        return currGameID;
     }
 
     public static void main(String[] args) throws Exception {
@@ -37,7 +52,7 @@ public class Menu implements NotificationHandler {
 
         boolean loggedIn = false;
         boolean inGame = false;
-        int currGameID = 0;
+        menu.setIsWhite(true);
         String prefix = ES.SET_TEXT_COLOR_GREEN;
         Scanner scanner = new Scanner(System.in);
         System.out.print(ES.SET_TEXT_COLOR_WHITE);
@@ -159,22 +174,25 @@ public class Menu implements NotificationHandler {
                         ChessGame.TeamColor teamColor;
                         int gameID = menu.gameList.get((Integer.parseInt(gameNum)-1)).gameID();
 
+                        menu.setCurrGameID(gameID);
+
                         if(color.equalsIgnoreCase("BLACK")) {
                             teamColor = ChessGame.TeamColor.BLACK;
+                            menu.setIsWhite(false);
                         } else if (color.equalsIgnoreCase("WHITE")) {
                             teamColor = ChessGame.TeamColor.WHITE;
+                            menu.setIsWhite(true);
                         } else {
                             teamColor = null;
+                            menu.setIsWhite(true);
                         }
                         ServerFacade.joinGame(menu.authToken,color.toUpperCase(),gameID);
                         JoinPlayer joinPlayer = new JoinPlayer(menu.authToken, gameID, teamColor);
                         menu.wsfacade.send(new Gson().toJson(joinPlayer));
-
+                        inGame = true;
 
                         System.out.print("  \uD83D\uDD79 [GAME] Game joined as " + color.toUpperCase() + " player!\n");
-                        inGame = true;
-                        currGameID = gameID;
-                        break;
+                        System.out.print("  \uD83D\uDD79 [GAME] Leaving current game.\n");
 
 
                     } else if (input.equalsIgnoreCase("observe")) {
@@ -182,11 +200,15 @@ public class Menu implements NotificationHandler {
                         String gameNum = scanner.nextLine();
                         int gameID = menu.gameList.get((Integer.parseInt(gameNum))-1).gameID();
 
+                        menu.setCurrGameID(gameID);
+
                         ServerFacade.joinGame(menu.authToken,null,gameID);
-                        System.out.print("  \uD83D\uDD79 [GAME] Game joined as an observer.\n");
+                        JoinObserver joinObserver = new JoinObserver(menu.authToken,gameID);
+                        menu.wsfacade.send(new Gson().toJson(joinObserver));
                         inGame = true;
-                        currGameID = gameID;
-                        break;
+
+                        System.out.print("  \uD83D\uDD79 [GAME] Game joined as an observer.\n");
+
 
                     } else {
                         System.out.print("  \uD83D\uDD79 [GAME] Sorry, I don't know that command. Try typing \"help\" into the console for a list of available commands.\n");
@@ -203,9 +225,9 @@ public class Menu implements NotificationHandler {
                 while(inGame) {
 
                     try {
-                        System.out.print("  \uD83D\uDD79 [GAME] Welcome to the game.\n");
-                        System.out.print("\uD83D\uDFE9 ["+ menu.user + "] >> ");
+                        System.out.print("\uD83D\uDFE9 [ "+ menu.user + " - IN GAME ] >> ");
                         String input = scanner.nextLine();
+
 
                         if (input.equalsIgnoreCase("leave")) {
                             System.out.print("  \uD83D\uDD79 [GAME] Leaving current game.\n");
@@ -221,11 +243,9 @@ public class Menu implements NotificationHandler {
                             System.out.print(prefix + "  highlight" + ES.SET_TEXT_COLOR_WHITE + " - to highlight legal moves\n");
                             System.out.print(prefix + "  help" + ES.SET_TEXT_COLOR_WHITE + " - to see possible command options\n");
 
-                        } else if (input.equalsIgnoreCase("join")) {
-                            System.out.print("  \uD83D\uDD79 [GAME] Enter your game name here: ");
-                            String gameName = scanner.nextLine();
-                            CreateGameResponse response =  ServerFacade.createGame(menu.authToken,gameName);
-                            System.out.print("  \uD83D\uDD79 [GAME] Great! Game has been created with name " + prefix +  gameName + ES.SET_TEXT_COLOR_WHITE + " and ID " + prefix +  response.gameID() + ES.SET_TEXT_COLOR_WHITE + "!\n");
+                        } else if (input.equalsIgnoreCase("redraw")) {
+                            System.out.print("  \uD83D\uDD79 [GAME] Here's the current game board: \n");
+                            menu.runBoard();
 
                         }
 
@@ -254,20 +274,32 @@ public class Menu implements NotificationHandler {
     private void printLoadGame(String json) throws Exception {
         //deserialize json into the game board and print the board
         LoadGame loadGame = new Gson().fromJson(json, LoadGame.class);
-        chess.ChessBoard board = loadGame.getGame().game().getBoard();
-        chessboard.run(board);
+        GameData gameData = loadGame.getGame();
+        currBoard = null;
+        currBoard = gameData.game().getBoard();
+        runBoard();
+        System.out.print("\n \uD83D\uDFE9 ["+ this.user + " - IN GAME ] >> ");
+
+
+    }
+
+    private void runBoard() throws Exception {
+        chessboard.run(currBoard, isWhite);
 
     }
 
     private void printNotification(String json) {
         Notification notification = new Gson().fromJson(json, Notification.class);
         String message = notification.getMessage();
-        System.out.print("  \uD83D\uDD79 [GAME] NOTIFICATION:" + message + "\n");
+        System.out.print("\n  \uD83D\uDD79 [GAME] NOTIFICATION: " + message + "\n");
+        System.out.print("\uD83D\uDFE9 ["+ this.user + " - IN GAME ] >> ");
+
     }
 
     private void printError(String json) {
         Error error = new Gson().fromJson(json, Error.class);
         String message = error.getMessage();
-        System.out.print("  \uD83D\uDD79 [GAME] ERROR:" + message + "\n");
+        System.out.print("\n  \uD83D\uDD79 [GAME] ERROR: " + message + "\n");
+        System.out.print("\uD83D\uDFE9 ["+ this.user + " - IN GAME ] >> ");
     }
 }

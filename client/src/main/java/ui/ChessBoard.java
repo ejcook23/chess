@@ -17,22 +17,28 @@ public class ChessBoard {
     private static final String EMPTY = "   ";
     static ArrayList<String> boardArray = new ArrayList<>();
     static ArrayList<String> colorArray = new ArrayList<>();
-    chess.ChessBoard currBoard;
+    chess.ChessBoard currentBoard;
 
 
-    public void run(chess.ChessBoard board) throws Exception {
-        this.currBoard = board;
+    public void run(chess.ChessBoard board, Boolean isWhite) throws Exception {
+        this.currentBoard = board;
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
+        boardArray.clear();
+        colorArray.clear();
+
         populateBoardArrays(out, board, boardArray, colorArray);
-        printBoard(out, true,boardArray, colorArray);
 
-        out.print("\n");
-
-        printBoard(out, false,boardArray, colorArray);
-
-        out.print("\n");
+        if(isWhite) {
+            out.print("\n");
+            printBoard(out, true,boardArray, colorArray);
+            out.print("\n");
+        } else {
+            out.print("\n");
+            printBoard(out, false,boardArray, colorArray);
+            out.print("\n");
+        }
 
 
     }
